@@ -214,10 +214,11 @@ public class MaskUI : MonoBehaviour, IMaterialModifier, IPoolable
     }
 
     public void OnHideComplete(Action act) => _onHideComplete = act;
+    public void InvokeHideComplete() => _onHideComplete?.Invoke();
 
     public void Reset()
     {
-        _onHideComplete?.Invoke();
+        InvokeHideComplete();
         gameObject.SetActive(false);
         _maskFadeImage.color = _maskFadeImage.color.SetAlpha(0f);
     }

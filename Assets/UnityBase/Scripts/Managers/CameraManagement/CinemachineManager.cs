@@ -11,7 +11,7 @@ namespace UnityBase.Manager
     {
         public static Action<GameState> OnChangeCamera;
 
-        public static event Action<float, bool> OnCamSwipe;
+        //public static event Action<float, bool> OnCamSwipe;
 
         private CameraSwipeController _cameraSwipeController;
 

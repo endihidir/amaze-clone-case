@@ -7,16 +7,16 @@ namespace UnityBase.DesignPatterns.Strategy
     {
         [SerializeField] private SpellStrategy[] _spells;
 
-        public event Action<int> OnButtonPressed;
+       // public event Action<int> OnButtonPressed;
 
         private void OnEnable()
         {
-            OnButtonPressed += CastSpell;
+            //OnButtonPressed += CastSpell;
         }
 
         private void OnDisable()
         {
-            OnButtonPressed -= CastSpell;
+            //OnButtonPressed -= CastSpell;
         }
 
         private void CastSpell(int index)

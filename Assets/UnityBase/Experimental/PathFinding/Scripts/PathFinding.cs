@@ -12,13 +12,13 @@ namespace UnityBase.PathFinding
         private const int MOVE_STRAIGHT_COST = 10;
         private const int MOVE_DIAGONAL_COST = 14;
 
-        private Grid<PathNode> _grid;
+        private GridXY<PathNode> _gridXY;
         private int _width;
         private int _height;
 
         public PathFinding(int width, int height, float cellSize, Vector3 originPos, Transform transform)
         {
-            _grid = new Grid<PathNode>(width, height, cellSize, originPos, transform, DefaultPathNodeValue);
+            _gridXY = new GridXY<PathNode>(width, height, cellSize, originPos, transform, DefaultPathNodeValue);
             _width = width;
             _height = height;
 
@@ -26,9 +26,9 @@ namespace UnityBase.PathFinding
             // FindPath(int2.zero, int2.zero);
         }
 
-        public Grid<PathNode> GetGrid() => _grid;
+        public GridXY<PathNode> GetGrid() => _gridXY;
 
-        private PathNode DefaultPathNodeValue(Grid<PathNode> g, int x, int y)
+        private PathNode DefaultPathNodeValue(GridXY<PathNode> g, int x, int y)
         {
             return new PathNode { x = x, y = y, index = CalculateIndex(x, y, g.Height), isWalkable = true };
         }
@@ -72,7 +72,7 @@ namespace UnityBase.PathFinding
                         index = CalculateIndex(x, y, _height),
                         gCost = int.MaxValue,
                         hCost = CalculateDistanceCost(new int2(x, y), endNodePos),
-                        isWalkable = _grid.GetGridObject(x, y).isWalkable,
+                        isWalkable = _gridXY.GetGridObject(x, y).isWalkable,
                         cameFromNodeIndex = -1
                     };
 

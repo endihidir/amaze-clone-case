@@ -11,5 +11,6 @@ namespace UnityBase.Pool
         public void Show(float duration, float delay);
         public void Hide(float duration, float delay);
         public void OnHideComplete(Action act);
+        public void InvokeHideComplete();
     }
 }

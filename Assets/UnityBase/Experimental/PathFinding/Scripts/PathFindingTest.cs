@@ -14,7 +14,7 @@ namespace UnityBase.PathFinding
 
         [ReadOnly] [SerializeField] private Vector3 _centerPos;
 
-        private Grid<PathNode> _grid;
+        private GridXY<PathNode> _gridXY;
 
         private PathNode _startNode;
 
@@ -52,9 +52,9 @@ namespace UnityBase.PathFinding
 
             _pathFinding = new PathFinding(Width, Height, _cellSize, _centerPos, transform);
 
-            _grid = _pathFinding.GetGrid();
+            _gridXY = _pathFinding.GetGrid();
 
-            _startNode = _grid.GetGridObject(_centerPos);
+            _startNode = _gridXY.GetGridObject(_centerPos);
         }
 
         private void Update()
@@ -65,13 +65,13 @@ namespace UnityBase.PathFinding
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (_grid == null) return;
+                if (_gridXY == null) return;
 
-                _grid.GetXY(mouseWorldPos, out var x, out var y);
+                _gridXY.GetXY(mouseWorldPos, out var x, out var y);
 
-                if (!_grid.IsInRange(x, y)) return;
+                if (!_gridXY.IsInRange(x, y)) return;
 
-                var endNode = _grid.GetGridObject(mouseWorldPos);
+                var endNode = _gridXY.GetGridObject(mouseWorldPos);
 
                 if (!endNode.isWalkable || endNode.index == _startNode.index) return;
 
@@ -100,13 +100,13 @@ namespace UnityBase.PathFinding
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                if (_grid == null) return;
+                if (_gridXY == null) return;
 
-                var pathNode = _grid.GetGridObject(mouseWorldPos);
+                var pathNode = _gridXY.GetGridObject(mouseWorldPos);
 
                 pathNode.SetWalkable(!pathNode.isWalkable);
 
-                _grid.SetGridObject(mouseWorldPos, pathNode);
+                _gridXY.SetGridObject(mouseWorldPos, pathNode);
 
                 UpdateVisual();
             }
@@ -120,11 +120,11 @@ namespace UnityBase.PathFinding
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    var grid = _grid.GetGridObject(x, y);
+                    var grid = _gridXY.GetGridObject(x, y);
 
                     var quadSize = grid.isWalkable ? Vector3.zero : new Vector3(1, 1) * _cellSize;
 
-                    var pos = _grid.GetWorldPosition(x, y) + quadSize * 0.5f;
+                    var pos = _gridXY.GetWorldPosition(x, y) + quadSize * 0.5f;
 
                     MeshUtils.AddToMeshArrays(vertices, uv, triangles, grid.index, pos, 0f, quadSize, Vector2.zero,
                         Vector2.zero);
@@ -140,18 +140,18 @@ namespace UnityBase.PathFinding
         {
             if (!Application.isPlaying) return;
 
-            if (_grid == null) return;
+            if (_gridXY == null) return;
 
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    Gizmos.DrawLine(_grid.GetWorldPosition(x, y), _grid.GetWorldPosition(x, y + 1));
-                    Gizmos.DrawLine(_grid.GetWorldPosition(x, y), _grid.GetWorldPosition(x + 1, y));
+                    Gizmos.DrawLine(_gridXY.GetWorldPosition(x, y), _gridXY.GetWorldPosition(x, y + 1));
+                    Gizmos.DrawLine(_gridXY.GetWorldPosition(x, y), _gridXY.GetWorldPosition(x + 1, y));
                 }
 
-                Gizmos.DrawLine(_grid.GetWorldPosition(0, Height), _grid.GetWorldPosition(Width, Height));
-                Gizmos.DrawLine(_grid.GetWorldPosition(Width, 0), _grid.GetWorldPosition(Width, Height));
+                Gizmos.DrawLine(_gridXY.GetWorldPosition(0, Height), _gridXY.GetWorldPosition(Width, Height));
+                Gizmos.DrawLine(_gridXY.GetWorldPosition(Width, 0), _gridXY.GetWorldPosition(Width, Height));
             }
         }
     }

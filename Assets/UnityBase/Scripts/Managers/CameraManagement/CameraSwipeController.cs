@@ -37,7 +37,7 @@ namespace UnityBase.Controller
         {
             _gameplayVirtualCamera.m_Transitions.m_OnCameraLive.AddListener(OnCameraLive);
 
-            CinemachineManager.OnCamSwipe += OnMapScrolling;
+            //CinemachineManager.OnCamSwipe += OnMapScrolling;
 
             OnStart();
         }
@@ -46,7 +46,7 @@ namespace UnityBase.Controller
         {
             _gameplayVirtualCamera.m_Transitions.m_OnCameraLive.RemoveListener(OnCameraLive);
 
-            CinemachineManager.OnCamSwipe -= OnMapScrolling;
+            //CinemachineManager.OnCamSwipe -= OnMapScrolling;
 
             OnDispose();
         }

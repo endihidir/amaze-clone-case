@@ -47,7 +47,7 @@ namespace UnityBase.PopUpCore
         public abstract void Hide(float duration, float delay);
         
         public void OnHideComplete(Action act) => _onHideComplete = act;
-        protected void InvokeHideComplete() => _onHideComplete?.Invoke();
+        public void InvokeHideComplete() => _onHideComplete?.Invoke();
 
         protected void SetGroupSettings(float alpha, bool interactable, bool raycastTarget)
         {

@@ -38,6 +38,7 @@ namespace UnityBase.Manager
                 var jsonData = SerializationUtility.SerializeValue(data, DataFormat);
                 
                 File.WriteAllBytes(filePath, jsonData);
+
 #if UNITY_EDITOR
                 AssetDatabase.Refresh();
 #endif
@@ -68,7 +69,7 @@ namespace UnityBase.Manager
             }
 
             var jsonData = File.ReadAllBytes(filePath);
-            
+                
             var data = SerializationUtility.DeserializeValue<T>(jsonData, DataFormat);
             
             return data;

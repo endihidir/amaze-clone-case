@@ -68,7 +68,7 @@ namespace UnityBase.Manager
         {
             if (!_passSplashScreen) await StartSplashScreen();
 
-            _sceneDataService.LoadSceneAsync(SceneType.MainMenu);
+            _sceneDataService.LoadSceneAsync(SceneType.Gameplay);
         }
 
         private async UniTask StartSplashScreen()

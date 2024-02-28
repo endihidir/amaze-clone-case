@@ -17,7 +17,7 @@ public class BulletTest : MonoBehaviour, IPoolable
     [Inject]
     protected readonly IPoolDataService _poolDataService;
     
-    protected event Action  _onHideComplete;
+    private event Action _onHideComplete;
     
     private void Awake()
     {
@@ -44,7 +44,7 @@ public class BulletTest : MonoBehaviour, IPoolable
     {
         gameObject.SetActive(false);
         
-        _onHideComplete?.Invoke();
+        InvokeHideComplete();
     }
 
     private void Update()
@@ -65,7 +65,8 @@ public class BulletTest : MonoBehaviour, IPoolable
     }
     
     public void OnHideComplete(Action act) => _onHideComplete = act;
-    
+    public void InvokeHideComplete() => _onHideComplete?.Invoke();
+
     private void OnDestroy()
     {
         _scaleTween.Kill();

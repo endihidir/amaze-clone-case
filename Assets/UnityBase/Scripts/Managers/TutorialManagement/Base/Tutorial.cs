@@ -67,6 +67,7 @@ namespace UnityBase.TutorialCore
         
         public void SetSpawnSpace(PositionSpace spawnSpace) => _spawnSpace = spawnSpace;
         public void OnHideComplete(Action act) => _onHideComplete = act;
+        public void InvokeHideComplete() => _onHideComplete?.Invoke();
 
         protected virtual void ResetTutorial()
         {
@@ -75,8 +76,8 @@ namespace UnityBase.TutorialCore
             SetDefaultTransformData();
 
             Fade(1f);
-            
-            _onHideComplete?.Invoke();
+
+            InvokeHideComplete();
         }
 
         private Tutorial SmoothFade(float endVal, float duration, float delay, Ease ease = Ease.Linear)
@@ -105,10 +106,7 @@ namespace UnityBase.TutorialCore
             }
         }
 
-        private void OnFadeComplete(Action act)
-        {
-            _onFadeComplete = act;
-        }
+        private void OnFadeComplete(Action act) => _onFadeComplete = act;
 
         private void Fade(float alpha)
         {

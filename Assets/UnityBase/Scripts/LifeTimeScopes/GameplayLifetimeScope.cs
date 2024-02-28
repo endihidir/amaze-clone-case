@@ -12,8 +12,9 @@ namespace UnityBase.BaseLifetimeScope
             builder.RegisterEntryPoint<GameplayManagerPresenter>();
             
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            
             builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            builder.Register<GridNodeSerializer>(Lifetime.Scoped).AsImplementedInterfaces();
         }
     }
 }
