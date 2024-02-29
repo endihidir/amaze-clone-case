@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityBase.TutorialCore.TutorialAction;
 using UnityEngine;
@@ -51,9 +52,9 @@ namespace UnityBase.TutorialCore
             return (T)_selectedHandAction;
         }
 
-        protected override void ResetTutorial()
+        protected override void ResetTutorial(Action onComplete)
         {
-            base.ResetTutorial();
+            base.ResetTutorial(onComplete);
 
             _selectedHandAction?.Reset();
         }

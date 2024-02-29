@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using UnityBase.TutorialCore.TutorialAction;
@@ -59,9 +60,9 @@ namespace UnityBase.TutorialCore
             return (T)_selectedTextAction;
         }
 
-        protected override void ResetTutorial()
+        protected override void ResetTutorial(Action onComplete)
         {
-            base.ResetTutorial();
+            base.ResetTutorial(onComplete);
 
             _selectedTextAction?.Reset();
         }

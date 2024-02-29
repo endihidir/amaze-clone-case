@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityBase.PopUpCore;
 using UnityBase.UI.ButtonCore;
@@ -24,7 +25,7 @@ public class MainMenuSettingsPopUp : PopUp
     }
 #endif
     
-    public override void Show(float duration, float delay)
+    public override void Show(float duration, float delay, Action onComplete)
     {
         UpdateBehaviours();
         
@@ -40,10 +41,11 @@ public class MainMenuSettingsPopUp : PopUp
                             .Append(DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 1, duration).SetEase(Ease.Linear))
                             .Join(_popUpHandler.DOScale(Vector3.one, 0.2f).SetEase(Ease.Linear))
                             .SetDelay(delay)
-                            .SetUpdate(true);
+                            .SetUpdate(true)
+                            .OnComplete(()=> onComplete?.Invoke());
     }
 
-    public override void Hide(float duration, float delay)
+    public override void Hide(float duration, float delay, Action onComplete)
     {
         _popUpTween.Kill();
         
@@ -54,7 +56,7 @@ public class MainMenuSettingsPopUp : PopUp
                             .AppendCallback(()=> gameObject.SetActive(false))
                             .SetDelay(delay)
                             .SetUpdate(true)
-                            .OnComplete(InvokeHideComplete);
+                            .OnComplete(()=> onComplete?.Invoke());
     }
     
     private void UpdateBehaviours()

@@ -16,21 +16,21 @@ namespace UnityBase.ManagerSO
     [CreateAssetMenu(menuName = "Game/LevelManagement/LevelData", order = 1)]
     public class LevelSO : SerializedScriptableObject
     {
-        public int index;
-
         private const string FOLDER_PATH = "Assets/_AssetsMain/Prefabs/Grid";
+        
+        public int index;
         public string Key => name;
 
         [Header("Grid Data")] [ShowIf("IsMatrixNullOrEmpty")]
         public int width;
-
-        [ShowIf("IsMatrixNullOrEmpty")] public int height;
+        [ShowIf("IsMatrixNullOrEmpty")] 
+        public int height;
 
         [TableMatrix(SquareCells = true, DrawElementMethod = "DrawElement")]
         public GameObject[,] gridLevel;
 
         private bool IsMatrixNullOrEmpty => gridLevel == null || gridLevel.Length < 1;
-
+      
 
         [Button, ShowIf("IsMatrixNullOrEmpty")]
         public void CreateGrid()
@@ -41,18 +41,20 @@ namespace UnityBase.ManagerSO
         [Button]
         public void SaveGridToJsonFile()
         {
-            var jsonDataManager = new JsonDataManager() { DataFormat = DataFormat.JSON };
+            var jsonDataManager = new JsonDataManager{ DataFormat = DataFormat.JSON };
             var gridNodeSerializer = new GridNodeSerializer(default);
             var serlializedNodeData = new int[width, height];
 
-            for (int i = 0; i < width; i++)
+            for (int x = 0; x < width; x++)
             {
-                for (int j = 0; j < height; j++)
+                for (int z = 0; z < height; z++)
                 {
-                    serlializedNodeData[i, j] = gridNodeSerializer.Serialize(gridLevel[i, j]?.GetComponent<GridNode>());
+                    var gridNode = gridLevel[x, z]?.GetComponent<GridNode>();
+                    
+                    serlializedNodeData[x, height - 1 - z] = gridNodeSerializer.Serialize(gridNode);
                 }
             }
-            
+
             jsonDataManager.Save(Key, serlializedNodeData);
         }
 

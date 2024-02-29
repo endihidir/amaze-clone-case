@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.Utilities;
@@ -38,33 +39,35 @@ namespace UnityBase.Pool
                 CreateNewObject(true);
         }
 
-        public IPoolable ShowObject(float duration, float delay)
+        public IPoolable ShowObject(float duration, float delay, Action onComplete)
         {
             if (!_poolParent) CreatePoolParent();
 
             var poolable = _pool.FirstOrDefault(IsShowable) ?? CreateNewObject(false);
 
-            poolable?.Show(duration, delay);
+            poolable?.Show(duration, delay, onComplete);
 
             return poolable;
         }
 
         private bool IsShowable(IPoolable poolable) => !poolable.IsActive || poolable.IsUnique;
 
-        public void HideObject(IPoolable poolable, float duration, float delay)
+        public void HideObject(IPoolable poolable, float duration, float delay, Action onComplete)
         {
             if (!IsHidable(poolable)) return;
             
-            poolable.Hide(duration, delay);
-            
-            poolable.OnHideComplete(()=> SetPoolableObjectParent(poolable));
+            poolable.Hide(duration, delay, ()=>
+            {
+                SetPoolableObjectParent(poolable);
+                onComplete?.Invoke();
+            });
         }
 
         private bool IsHidable(IPoolable poolable) => poolable.IsActive || poolable.IsUnique;
 
-        public void HideAllObjects(float duration, float delay)
+        public void HideAllObjects(float duration, float delay, Action onComplete)
         {
-            _pool.ForEach(poolable => HideObject(poolable, duration, delay));
+            _pool.ForEach(poolable => HideObject(poolable, duration, delay, onComplete));
         }
 
         public void Remove(IPoolable poolable)
@@ -104,7 +107,7 @@ namespace UnityBase.Pool
 
             if (onInitialize)
             {
-                poolable.Hide(0f, 0f);
+                poolable.Hide(0f, 0f, default);
             }
 
             _pool.Add(poolable);
@@ -124,7 +127,6 @@ namespace UnityBase.Pool
             _poolParent = new GameObject("Pool_" + _poolable.PoolableObject.name);
             _poolParent.transform.SetParent(_rootParent);
         }
-        
 
         public void Dispose()
         {

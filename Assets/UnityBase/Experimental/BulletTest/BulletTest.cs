@@ -16,37 +16,34 @@ public class BulletTest : MonoBehaviour, IPoolable
 
     [Inject]
     protected readonly IPoolDataService _poolDataService;
-    
-    private event Action _onHideComplete;
-    
+
     private void Awake()
     {
         _collider = GetComponent<Collider>();
     }
 
-    public void Show(float duration, float delay)
+    public void Show(float duration, float delay, Action onComplete)
     {
         transform.localScale = Vector3.one;
         
         gameObject.SetActive(true);
 
         _collider.enabled = true;
+        
+        onComplete?.Invoke();
     }
     
-    public void Hide(float duration, float delay)
+    public void Hide(float duration, float delay, Action onComplete)
     {
         _scaleTween.Kill();
         
-        _scaleTween = transform.DOScale(0f, duration).OnComplete(Disable);
+        _scaleTween = transform.DOScale(0f, duration).OnComplete(()=>
+        {
+            gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
     }
-
-    private void Disable()
-    {
-        gameObject.SetActive(false);
-        
-        InvokeHideComplete();
-    }
-
+    
     private void Update()
     {
         if(_scaleTween.IsActive()) return;
@@ -60,12 +57,9 @@ public class BulletTest : MonoBehaviour, IPoolable
         {
             _collider.enabled = false;
             
-            _poolDataService.HideObject(this, 1f, 0f);
+            _poolDataService.HideObject(this, 1f, 0f, default);
         }
     }
-    
-    public void OnHideComplete(Action act) => _onHideComplete = act;
-    public void InvokeHideComplete() => _onHideComplete?.Invoke();
 
     private void OnDestroy()
     {

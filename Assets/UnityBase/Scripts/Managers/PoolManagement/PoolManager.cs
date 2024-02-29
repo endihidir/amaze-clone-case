@@ -44,24 +44,24 @@ namespace UnityBase.Manager
             _objectResolver = null;
         }
 
-        public T GetObject<T>(float duration, float delay) where T : Component, IPoolable
+        public T GetObject<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable
         {
             var key = typeof(T);
 
             if (_cachedPools.TryGetValue(key, out var poolableObjectGroup))
             {
-                var poolable = poolableObjectGroup.ShowObject(duration, delay);
+                var poolable = poolableObjectGroup.ShowObject(duration, delay, onComplete);
                 return (T)poolable;
             }
             else
             {
                 poolableObjectGroup = Create<T>();
-                var poolable = poolableObjectGroup.ShowObject(duration, delay);
+                var poolable = poolableObjectGroup.ShowObject(duration, delay, onComplete);
                 return (T)poolable;
             }
         }
         
-        public void HideObject<T>(T poolable, float duration, float delay, bool readLogs = false) where T : Component, IPoolable
+        public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable
         {
             var key = poolable.GetType();
 
@@ -73,10 +73,10 @@ namespace UnityBase.Manager
                 return;
             }
             
-            poolableObject.HideObject(poolable, duration, delay);
+            poolableObject.HideObject(poolable, duration, delay, onComplete);
         }
 
-        public void HideAllObjectsOfType<T>(float duration, float delay, bool readLogs = false) where T : Component, IPoolable
+        public void HideAllObjectsOfType<T>(float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable
         {
             var key = typeof(T);
 
@@ -88,25 +88,25 @@ namespace UnityBase.Manager
                 return;
             }
 
-            poolableObjectGroup.HideAllObjects(duration, delay);
+            poolableObjectGroup.HideAllObjects(duration, delay, onComplete);
         }
         
-        public void HideAllTypeOf<T>(float duration, float delay) where T : Component, IPoolable
+        public void HideAllTypeOf<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable
         {
             foreach (var poolableObject in _cachedPools)
             {
                 if (poolableObject.Value.GetType() == typeof(T))
                 {
-                    poolableObject.Value.HideAllObjects(duration, delay);
+                    poolableObject.Value.HideAllObjects(duration, delay, onComplete);
                 }
             }
         }
 
-        public void HideAll(float duration, float delay)
+        public void HideAll(float duration, float delay, Action onComplete = default)
         {
             foreach (var poolableObject in _cachedPools)
             {
-                poolableObject.Value.HideAllObjects(duration, delay);
+                poolableObject.Value.HideAllObjects(duration, delay, onComplete);
             }
         }
         

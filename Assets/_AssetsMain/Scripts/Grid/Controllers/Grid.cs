@@ -30,12 +30,12 @@ public class Grid<T> where T : GridNode
 
     ~Grid() => _gridEntity = null;
     
-    public float3 GetWorldPosition(int x, int z)
+    public float3 GetWorldPosition(int x, int y, int z)
     {
         var xPos = x * (_gridEntity.NodeSize + _gridEntity.Padding.x);
         var zPos = z * (_gridEntity.NodeSize + _gridEntity.Padding.z);
         
-        var worldPos = new float3(xPos ,0f, zPos) + _gridEntity.OriginPos;
+        var worldPos = new float3(xPos , y, zPos) + _gridEntity.OriginPos;
         
         return worldPos;
     }
@@ -65,7 +65,7 @@ public class Grid<T> where T : GridNode
         _gridArray[x, z] = value;
     }
     
-    private void SetGridObject(int x, int z, T gridNode)
+    public void SetGridObject(int x, int z, T gridNode)
     {
         if(_gridArray.GetLength(0) < x || _gridArray.GetLength(1) < z) return;
         

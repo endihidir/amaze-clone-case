@@ -8,20 +8,21 @@ using VContainer.Unity;
 
 namespace UnityBase.Presenter
 {
-    public class GameplayManagerPresenter : IInitializable, IStartable, IDisposable
+    public class GameplayManagerPresenter : IInitializable, IPostInitializable, IDisposable
     {
-        [Inject] 
         private readonly IEnumerable<IGameplayPresenterDataService> _gameplayPresenterDataServices;
         
-        public GameplayManagerPresenter(IObjectResolver objectResolver)
+        public GameplayManagerPresenter(IObjectResolver objectResolver, IEnumerable<IGameplayPresenterDataService> gameplayPresenterDataServices)
         {
             var poolManager = objectResolver.Resolve<IPoolDataService>() as PoolManager;
             
             poolManager?.UpdateAllResolvers(objectResolver);
+
+            _gameplayPresenterDataServices = gameplayPresenterDataServices;
         }
         
         public void Initialize() => _gameplayPresenterDataServices.ForEach(x => x.Initialize());
-        public void Start() => _gameplayPresenterDataServices.ForEach(x => x.Start());
+        public void PostInitialize() => _gameplayPresenterDataServices.ForEach(x => x.Start());
         public void Dispose() => _gameplayPresenterDataServices.ForEach(x => x.Dispose());
     }
 }

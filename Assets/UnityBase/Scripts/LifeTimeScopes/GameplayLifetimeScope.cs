@@ -13,6 +13,7 @@ namespace UnityBase.BaseLifetimeScope
             
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<GridNodeSerializer>(Lifetime.Scoped).AsImplementedInterfaces();
         }

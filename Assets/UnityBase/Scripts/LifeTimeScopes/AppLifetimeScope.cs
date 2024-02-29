@@ -23,15 +23,15 @@ namespace UnityBase.BaseLifetimeScope
             RegisterSingletonServices(builder);
 
             RegisterScopedServices(builder);
+
+            RegisterTransientServices(builder);
         }
-        
+
         private void RegisterEntryPoints(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<AppManagerPresenter>();
         }
         
-        /* Note: If you register new classes in sub LifetimeScopes and if you need to inject them to poolable objects,
-         you need to update IObjectResolver in PoolManager*/
         private void RegisterSingletonServices(IContainerBuilder builder)
         {
             builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -43,7 +43,7 @@ namespace UnityBase.BaseLifetimeScope
             builder.Register<TutorialManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TutorialMaskManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TutorialStepManager>(Lifetime.Singleton).AsImplementedInterfaces();
-            
+
             builder.Register<CommandManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CurrencyManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TaskManager>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -52,7 +52,12 @@ namespace UnityBase.BaseLifetimeScope
         private void RegisterScopedServices(IContainerBuilder builder)
         {
             builder.Register<JsonDataManager>(Lifetime.Scoped).AsImplementedInterfaces();
-            builder.Register<CommandRecorder>(Lifetime.Scoped).AsImplementedInterfaces();
+        }
+        
+        private void RegisterTransientServices(IContainerBuilder builder)
+        {
+            builder.Register<SwipeInputConroller>(Lifetime.Transient).AsImplementedInterfaces();
+            builder.Register<CommandRecorder>(Lifetime.Transient).AsImplementedInterfaces();
         }
     }   
 }

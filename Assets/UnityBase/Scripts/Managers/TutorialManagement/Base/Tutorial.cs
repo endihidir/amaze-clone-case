@@ -20,7 +20,6 @@ namespace UnityBase.TutorialCore
 
         private Tween[] _fadeTweens;
         private event Action _onFadeComplete;
-        protected event Action _onHideComplete;
 
         #endregion
 
@@ -47,29 +46,28 @@ namespace UnityBase.TutorialCore
             CashDefaultTransformData();
         }
 
-        public void Show(float duration = 0f, float delay = 0f)
+        public void Show(float duration = 0f, float delay = 0f, Action onComplete = default)
         {
             gameObject.SetActive(true);
+            onComplete?.Invoke();
         }
         
-        public void Hide(float duration = 0f, float delay = 0f)
+        public void Hide(float duration = 0f, float delay = 0f, Action onComplete = default)
         {
             if (duration + delay > 0f)
             {
-                SmoothFade(0f, duration, delay).OnFadeComplete(ResetTutorial);
+                SmoothFade(0f, duration, delay).OnFadeComplete(()=> ResetTutorial(onComplete));
             }
             else
             {
                 Fade(0f);
-                ResetTutorial();
+                ResetTutorial(onComplete);
             }
         }
         
         public void SetSpawnSpace(PositionSpace spawnSpace) => _spawnSpace = spawnSpace;
-        public void OnHideComplete(Action act) => _onHideComplete = act;
-        public void InvokeHideComplete() => _onHideComplete?.Invoke();
 
-        protected virtual void ResetTutorial()
+        protected virtual void ResetTutorial(Action onComplete)
         {
             gameObject.SetActive(false);
 
@@ -77,7 +75,7 @@ namespace UnityBase.TutorialCore
 
             Fade(1f);
 
-            InvokeHideComplete();
+            onComplete?.Invoke();
         }
 
         private Tutorial SmoothFade(float endVal, float duration, float delay, Ease ease = Ease.Linear)

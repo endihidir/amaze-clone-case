@@ -52,7 +52,6 @@ public class MaskUI : MonoBehaviour, IMaterialModifier, IPoolable
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
-    protected event Action _onHideComplete;
 
     public bool showUnmaskGraphic
     {
@@ -202,23 +201,25 @@ public class MaskUI : MonoBehaviour, IMaterialModifier, IPoolable
         _fadePanelStartColor = fadePanelStartColor;
     }
     
-    public void Show(float duration, float delay)
+    public void Show(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(true);
+        onComplete?.Invoke();
     }
 
-    public void Hide(float duration, float delay)
+    public void Hide(float duration, float delay, Action onComplete)
     {
         _maskFadeTween.Kill();
-        _maskFadeTween = _maskFadeImage.DOColor(_fadePanelStartColor, duration).SetDelay(delay).OnComplete(Reset);
+        
+        _maskFadeTween = _maskFadeImage.DOColor(_fadePanelStartColor, duration).SetDelay(delay).OnComplete(()=>
+        {
+            onComplete?.Invoke();
+            Reset();
+        });
     }
 
-    public void OnHideComplete(Action act) => _onHideComplete = act;
-    public void InvokeHideComplete() => _onHideComplete?.Invoke();
-
-    public void Reset()
+    private void Reset()
     {
-        InvokeHideComplete();
         gameObject.SetActive(false);
         _maskFadeImage.color = _maskFadeImage.color.SetAlpha(0f);
     }

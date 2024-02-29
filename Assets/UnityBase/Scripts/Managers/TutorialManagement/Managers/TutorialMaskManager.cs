@@ -115,9 +115,9 @@ namespace UnityBase.Manager
             return true;
         }
 
-        public async void HideMask(MaskUI maskUI, float killDuration = 0f, float delay = 0f, bool readLogs = false)
+        public async void HideMask(MaskUI maskUI, float killDuration = 0f, float delay = 0f, Action onComplete = default, bool readLogs = false)
         {
-            _poolDataService.HideObject(maskUI, killDuration, delay, readLogs);
+            _poolDataService.HideObject(maskUI, killDuration, delay, default, readLogs);
 
             var raycastFitter = _maskRaycastFilters.FirstOrDefault(x => x.TargetMaskUI == maskUI);
 

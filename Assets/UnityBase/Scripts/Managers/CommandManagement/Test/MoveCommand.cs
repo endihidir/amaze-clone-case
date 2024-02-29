@@ -8,9 +8,7 @@ namespace UnityBase.Command
         protected readonly IMoveEntity _moveEntity;
         public abstract bool IsInProgress { get; }
         public abstract bool CanPassNextCommandInstantly { get; }
-        
         protected MoveCommand(IMoveEntity moveEntity) => _moveEntity = moveEntity;
-        
         public abstract void Record();
         public abstract UniTask Execute();
         public abstract UniTask Undo(bool directly);

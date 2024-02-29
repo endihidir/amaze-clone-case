@@ -1,4 +1,5 @@
-﻿using UnityBase.ManagerSO;
+﻿using System;
+using UnityBase.ManagerSO;
 using UnityBase.PopUpCore;
 using UnityBase.Service;
 using UnityEngine;
@@ -39,14 +40,14 @@ namespace UnityBase.Manager
             return popUp;
         }
 
-        public void HidePopUp(PopUp popUp, float duration = 0.2f, float delay = 0f, bool readLogs = false)
+        public void HidePopUp(PopUp popUp, float duration = 0.2f, float delay = 0f, Action onComplete = default, bool readLogs = false)
         {
-            _poolDataService.HideObject(popUp, duration, delay, readLogs);
+            _poolDataService.HideObject(popUp, duration, delay, onComplete, readLogs);
         }
         
-        public void HideAllPopUpOfType<T>(float duration = 0.2f, float delay = 0f, bool readLogs = false) where T : PopUp
+        public void HideAllPopUpOfType<T>(float duration = 0.2f, float delay = 0f, Action onComplete = default, bool readLogs = false) where T : PopUp
         {
-            _poolDataService.HideAllObjectsOfType<T>(duration, delay, readLogs);
+            _poolDataService.HideAllObjectsOfType<T>(duration, delay, onComplete, readLogs);
         }
         
         public void HideAllPopUp(float duration = 0.2f, float delay = 0f)

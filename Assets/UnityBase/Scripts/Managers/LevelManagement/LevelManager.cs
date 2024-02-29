@@ -11,6 +11,7 @@ namespace UnityBase.Manager
     {
         public static Func<int, bool> OnSelectChapter;
         public static Func<int, bool> OnSelectLevel;
+        public static Action OnLevelComplete;
 
         private const string LAST_SELECTED_CHAPTER_KEY = "LastSelectedChapterKey";
         private const string LAST_SELECTED_LEVEL_KEY = "LastSelectedLevelKey";
@@ -158,6 +159,8 @@ namespace UnityBase.Manager
                     LastUnlockedLevelIndex = GetLastUnlockedChapterData().levelData.Length - 1;
                 }
             }
+            
+            OnLevelComplete?.Invoke();
         }
 
         public ChapterSO GetLastUnlockedChapterData() => _chapterData?[LastUnlockedChapterIndex];

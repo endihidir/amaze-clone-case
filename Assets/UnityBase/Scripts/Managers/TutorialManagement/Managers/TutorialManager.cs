@@ -1,3 +1,4 @@
+using System;
 using UnityBase.Extensions;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
@@ -55,14 +56,14 @@ namespace UnityBase.Manager
             return true;
         }
      
-        public void HideTutorial(Tutorial tutorial, float duration = 0f, float delay = 0f, bool readLogs = false)
+        public void HideTutorial(Tutorial tutorial, float duration = 0f, float delay = 0f, Action onComplete = default, bool readLogs = false)
         {
-            _poolDataService.HideObject(tutorial, duration, delay, readLogs);
+            _poolDataService.HideObject(tutorial, duration, delay, onComplete, readLogs);
         }
 
-        public void HideAllTutorialOfType<T>(float duration = 0f, float delay = 0f, bool readLogs = false) where T : Tutorial
+        public void HideAllTutorialOfType<T>(float duration = 0f, float delay = 0f, Action onComplete = default, bool readLogs = false) where T : Tutorial
         {
-            _poolDataService.HideAllObjectsOfType<T>(duration, delay, readLogs);
+            _poolDataService.HideAllObjectsOfType<T>(duration, delay, onComplete, readLogs);
         }
 
         public void HideAllTutorials(float duration = 0f, float delay = 0f)

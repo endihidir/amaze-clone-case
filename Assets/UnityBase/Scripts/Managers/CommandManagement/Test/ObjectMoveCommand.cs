@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityBase.Extensions;
 using UnityEngine;
 
 namespace UnityBase.Command
 {
-    public class UIMoveCommand : MoveCommand
+    public class ObjectMoveCommand : MoveCommand
     {
         private Vector3 _newPosition;
         private Vector3 _oldPosition;
         private bool _isInProgress;
-        private CancellationTokenSource _cancellationTokenSource;
         public override bool IsInProgress => _isInProgress;
         public override bool CanPassNextCommandInstantly => _moveEntity?.CanPassNextMovementInstantly ?? false;
-        
-        public UIMoveCommand(IMoveEntity moveEntity) : base(moveEntity) { }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        public ObjectMoveCommand(IMoveEntity moveEntity) : base(moveEntity) { }
 
         public override void Record() => _newPosition = _moveEntity.NewPosition;
 
@@ -51,7 +52,6 @@ namespace UnityBase.Command
         }
 
         public override void Cancel() => _cancellationTokenSource?.Cancel();
-
         public override void Dispose()
         {
             _cancellationTokenSource?.Cancel();
@@ -67,7 +67,14 @@ namespace UnityBase.Command
             try
             {
                 var transform = _moveEntity.Transform;
-                var speed = Vector3.Distance(transform.position, targetPosition) / (_moveEntity.Duration / 2);
+
+                var dir = (targetPosition - _moveEntity.Transform.position).normalized;
+                
+                var speed = transform.position.Distance(targetPosition) / (_moveEntity.Duration / 2);
+
+                transform.DOComplete();
+                
+                transform.DOPunchScale(dir * 0.65f, _moveEntity.Duration * 5f, 20);
 
                 while (transform.position.Distance(targetPosition) > 0.01f)
                 {
@@ -77,11 +84,12 @@ namespace UnityBase.Command
                 }
 
                 transform.position = targetPosition;
+                
                 _isInProgress = false;
             }
             catch (Exception e)
             {
-                Debug.Log(e);
+                //Debug.Log(e);
             }
         }
     }

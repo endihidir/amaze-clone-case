@@ -1,4 +1,3 @@
-using UnityBase.Manager;
 using UnityBase.Service;
 using UnityEngine;
 using VContainer;
@@ -16,7 +15,7 @@ namespace UnityBase.Command
         private ICommand _moveCommand;
         public Transform Transform => transform;
         public Vector3 NewPosition => Input.mousePosition;
-        public float Duration => 1f;
+        public float Duration => 0.2f;
         public bool CanPassNextMovementInstantly => true;
 
         private void Awake()
@@ -29,7 +28,7 @@ namespace UnityBase.Command
             //------------------------------------------------------------------------
             if (Input.GetKeyDown(KeyCode.S))
             {
-                _moveCommand = MoveCommand.Create<UIMoveCommand>(this);
+                _moveCommand = MoveCommand.Create<ObjectMoveCommand>(this);
 
                 _commandRecorder.RecordCommand(_moveCommand);
 
@@ -45,7 +44,7 @@ namespace UnityBase.Command
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _moveCommand = MoveCommand.Create<UIMoveCommand>(this);
+                _moveCommand = MoveCommand.Create<ObjectMoveCommand>(this);
 
                 _commandRecorder.Execute(_moveCommand);
             }

@@ -26,7 +26,6 @@ namespace UnityBase.PopUpCore
         private readonly IPopUpDataService _popUpDataService;
 
         private Vector2 _defaultSizeDelta;
-        protected event Action _onHideComplete;
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
@@ -43,11 +42,8 @@ namespace UnityBase.PopUpCore
             transform.localScale = Vector3.one;
         }
 
-        public abstract void Show(float duration, float delay);
-        public abstract void Hide(float duration, float delay);
-        
-        public void OnHideComplete(Action act) => _onHideComplete = act;
-        public void InvokeHideComplete() => _onHideComplete?.Invoke();
+        public abstract void Show(float duration, float delay, Action onComplete);
+        public abstract void Hide(float duration, float delay, Action onComplete);
 
         protected void SetGroupSettings(float alpha, bool interactable, bool raycastTarget)
         {
