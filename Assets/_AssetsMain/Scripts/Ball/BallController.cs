@@ -41,6 +41,7 @@ public class BallController : MonoBehaviour, IPoolable, IMoveEntity, IInputIniti
     public void Show(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(true);
+        _materialProvider.SetRandomMaterial();
         onComplete?.Invoke();
     }
 

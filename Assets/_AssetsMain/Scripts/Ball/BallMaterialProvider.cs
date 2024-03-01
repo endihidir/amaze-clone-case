@@ -10,9 +10,8 @@ public class BallMaterialProvider : MonoBehaviour
     
     [ReadOnly] [SerializeField] private Material _currentStampMaterial;
     public Material CurrentStampMaterial => _currentStampMaterial;
-    private void Awake() => SetRandomMaterial();
 
-    private void SetRandomMaterial()
+    public void SetRandomMaterial()
     {
         var index = Random.Range(0, _ballStampMaterials.Length);
         _currentStampMaterial = _ballStampMaterials[index];
