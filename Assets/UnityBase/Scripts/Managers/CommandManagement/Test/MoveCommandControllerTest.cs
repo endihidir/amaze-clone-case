@@ -13,9 +13,10 @@ namespace UnityBase.Command
         private readonly ICommandRecorder _commandRecorder;
 
         private ICommand _moveCommand;
+        public Transform MeshTransform => transform;
         public Transform Transform => transform;
         public Vector3 NewPosition => Input.mousePosition;
-        public float Duration => 0.2f;
+        public float Speed => 0.2f;
         public bool CanPassNextMovementInstantly => true;
 
         private void Awake()

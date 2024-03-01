@@ -2,7 +2,7 @@ using System;
 
 public interface IGridNodeSerializer
 {
-    public int Serialize(GridNode gridNode);
-    public T Deserialize<T>(int val) where T : GridNode;
+    public int Serialize(TileBase tileBase);
+    public T Deserialize<T>(int val) where T : TileBase;
     public Type Deserialize(int val);
 }

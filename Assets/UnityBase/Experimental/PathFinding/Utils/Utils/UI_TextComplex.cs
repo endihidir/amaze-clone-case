@@ -135,7 +135,7 @@ namespace CodeMonkey.Utils {
             rectTransform.anchoredPosition = position + new Vector2(-GetTotalWidth() / 2f, 0);
         }
         public void DestroySelf() {
-            Object.Destroy(gameObject);
+            UnityEngine.Object.Destroy(gameObject);
         }
     }
 }

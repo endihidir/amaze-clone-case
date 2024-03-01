@@ -2,7 +2,7 @@
 
 public interface ISwipeInputService
 {
-    public SwipeDirection GetSwipeDirection();
+    public Direction GetSwipeDirection();
 
-    public Vector3 CastDirectionToVector(SwipeDirection swipeDirection);
+    public Vector3 CastDirectionToVector(Direction direction);
 }

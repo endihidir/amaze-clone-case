@@ -75,7 +75,7 @@ namespace UnityBase.Pool
             if (!_pool.Contains(poolable)) return;
 
             if (poolable.PoolableObject) 
-                Object.Destroy(poolable.PoolableObject.gameObject);
+                UnityEngine.Object.Destroy(poolable.PoolableObject.gameObject);
 
             _pool.Remove(poolable);
         }
@@ -83,11 +83,11 @@ namespace UnityBase.Pool
         public void Clear()
         {
             _pool.Where(poolable => poolable.PoolableObject)
-                 .ForEach(poolable => Object.Destroy(poolable.PoolableObject.gameObject));
+                 .ForEach(poolable => UnityEngine.Object.Destroy(poolable.PoolableObject.gameObject));
 
             _pool?.Clear();
 
-            Object.Destroy(_poolParent);
+            UnityEngine.Object.Destroy(_poolParent);
         }
 
         public void UpdateObjectResolver(IObjectResolver objectResolver)
@@ -97,7 +97,7 @@ namespace UnityBase.Pool
 
         private IPoolable CreateNewObject(bool onInitialize)
         {
-            var poolableObject = Object.Instantiate(_poolable.PoolableObject, _poolParent.transform);
+            var poolableObject = UnityEngine.Object.Instantiate(_poolable.PoolableObject, _poolParent.transform);
             
             _objectResolver.InjectGameObject(poolableObject.gameObject);
 

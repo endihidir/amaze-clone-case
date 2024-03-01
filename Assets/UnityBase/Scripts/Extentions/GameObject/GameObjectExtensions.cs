@@ -22,7 +22,7 @@ namespace UnityBase.Extensions
         }
         
         
-        public static T OrNull<T>(this T obj) where T : Object => obj ? obj : null;
+        public static T OrNull<T>(this T obj) where T : UnityEngine.Object => obj ? obj : null;
 
         public static void DestroyChildren(this GameObject gameObject)
         {

@@ -56,6 +56,7 @@ namespace UnityBase.Command
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
+            _moveEntity.MeshTransform.DOKill();
         }
 
         private async UniTask MoveObjectAsync(Vector3 targetPosition)
@@ -66,31 +67,32 @@ namespace UnityBase.Command
 
             try
             {
-                var transform = _moveEntity.Transform;
-
                 var dir = (targetPosition - _moveEntity.Transform.position).normalized;
                 
-                var speed = transform.position.Distance(targetPosition) / (_moveEntity.Duration / 2);
-
-                transform.DOComplete();
+                BallBounceAnim(dir);
                 
-                transform.DOPunchScale(dir * 0.65f, _moveEntity.Duration * 5f, 20);
+                var transform = _moveEntity.Transform;
 
                 while (transform.position.Distance(targetPosition) > 0.01f)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-                    
+                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveEntity.Speed * Time.deltaTime);
                     await UniTask.Yield(PlayerLoopTiming.Update, _cancellationTokenSource.Token);
                 }
 
                 transform.position = targetPosition;
-                
                 _isInProgress = false;
             }
             catch (Exception e)
             {
                 //Debug.Log(e);
             }
+        }
+
+        private void BallBounceAnim(Vector3 dir)
+        {
+            _moveEntity.MeshTransform.DOComplete();
+            _moveEntity.MeshTransform.DOPunchScale(dir * 0.65f, 0.35f, 25)
+                .OnComplete(()=> _moveEntity.MeshTransform.localScale = Vector3.one);
         }
     }
 }

@@ -13,8 +13,9 @@ public class SuccessMenuGroup : MenuGroup
     {
         var openCondition = (gameStateData.StartState is GameState.GamePlayState or GameState.GameTutorialState) &&
                             gameStateData.EndState == GameState.GameSuccessState;
+        
         var closeCondition = gameStateData.StartState == GameState.GameSuccessState &&
-                             gameStateData.EndState == GameState.GameLoadingState;
+                             gameStateData.EndState == GameState.GamePlayState;
 
         if (openCondition)
         {

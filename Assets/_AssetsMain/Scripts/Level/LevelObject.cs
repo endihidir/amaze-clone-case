@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using Sirenix.Utilities;
 using UnityBase.Pool;
 using UnityBase.Service;
 using UnityEngine;
@@ -22,8 +23,10 @@ public class LevelObject : MonoBehaviour, IPoolable
     public Transform GridsParent => _gridsParent;
 
     public Transform BallsParent => _ballsParent;
-
     public void SetEndPos(float endXPos) => _endXPos = endXPos;
+
+    private IInputInitializeable[] _ballInputs;
+
     public void Show(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(true);
@@ -44,8 +47,6 @@ public class LevelObject : MonoBehaviour, IPoolable
 
     public void Hide(float duration, float delay, Action onComplete)
     {
-        DeactivateInput();
-        
         _moveTween?.Kill();
 
         _moveTween = transform.DOMoveX(_endXPos, duration)
@@ -56,7 +57,14 @@ public class LevelObject : MonoBehaviour, IPoolable
 
     private void OnHideComplete(Action onComplete)
     {
+        var allTileResettables = GetComponentsInChildren<IResettable>();
+        allTileResettables.ForEach(x => x.Reset());
+        
+        var allPoolables = GetComponentsInChildren<IPoolable>();
+        allPoolables.ForEach(x => _poolDataService.HidePoolable(x, 0f,0f));
+        
         onComplete?.Invoke();
+        
         gameObject.SetActive(false);
     }
 
@@ -68,11 +76,13 @@ public class LevelObject : MonoBehaviour, IPoolable
 
     private void ActivateInput()
     {
-        
+        _ballInputs = GetComponentsInChildren<IInputInitializeable>();
+
+        _ballInputs.ForEach(x => x.EnableInput(true));
     }
 
-    private void DeactivateInput()
+    public void DeactivateInput()
     {
-        
+        _ballInputs.ForEach(x => x.EnableInput(false));
     }
 }

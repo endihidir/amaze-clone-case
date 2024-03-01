@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
@@ -49,7 +50,7 @@ namespace UnityBase.ManagerSO
             {
                 for (int z = 0; z < height; z++)
                 {
-                    var gridNode = gridLevel[x, z]?.GetComponent<GridNode>();
+                    var gridNode = gridLevel[x, z]?.GetComponent<TileBase>();
                     
                     serlializedNodeData[x, height - 1 - z] = gridNodeSerializer.Serialize(gridNode);
                 }
@@ -62,15 +63,15 @@ namespace UnityBase.ManagerSO
         [Button]
         public void ResetToSavedFile()
         {
-            var prefabs = new List<GridNode>();
+            var prefabs = new List<TileBase>();
             var assetPaths = AssetDatabase.FindAssets("t:Prefab", new[] { FOLDER_PATH });
 
             foreach (var assetPath in assetPaths)
             {
                 var path = AssetDatabase.GUIDToAssetPath(assetPath);
-                var loadedAsset = AssetDatabase.LoadAssetAtPath(path, typeof(GridNode));
+                var loadedAsset = AssetDatabase.LoadAssetAtPath(path, typeof(TileBase));
 
-                if (loadedAsset is GridNode gridNode)
+                if (loadedAsset is TileBase gridNode)
                     prefabs.Add(gridNode);
                 
             }
@@ -118,7 +119,7 @@ namespace UnityBase.ManagerSO
         {
             var gridNode = gridLevel[row, col];
 
-            if (gridNode != null && gridNode.TryGetComponent<GridNode>(out var component))
+            if (gridNode != null && gridNode.TryGetComponent<TileBase>(out var component))
             {
                 var content = (component.icon != null) ? new GUIContent(component.icon) : GUIContent.none;
 
@@ -127,7 +128,7 @@ namespace UnityBase.ManagerSO
 #if UNITY_EDITOR
                 if (component.icon != null)
                 {
-                    EditorGUI.DrawPreviewTexture(rect, value.GetComponent<GridNode>().icon);
+                    EditorGUI.DrawPreviewTexture(rect, value.GetComponent<TileBase>().icon);
                 }
 #endif
             }

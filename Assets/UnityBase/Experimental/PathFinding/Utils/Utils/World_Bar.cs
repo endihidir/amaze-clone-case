@@ -87,7 +87,7 @@ namespace CodeMonkey.Utils {
         }
         public void DestroySelf() {
             if (gameObject != null) {
-                Object.Destroy(gameObject);
+                UnityEngine.Object.Destroy(gameObject);
             }
         }
 

@@ -8,6 +8,7 @@ namespace UnityBase.Service
     public interface IPoolDataService
     {
         public T GetObject<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable;
+        public void HidePoolable<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable;
         public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable;
         public void HideAllObjectsOfType<T>(float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable;
         public void HideAllTypeOf<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable;

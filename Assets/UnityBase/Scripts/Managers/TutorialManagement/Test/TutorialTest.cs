@@ -14,6 +14,9 @@ public class TutorialTest : MonoBehaviour
     
     [Inject]
     private readonly ITutorialMaskDataService _tutorialMaskDataService;
+
+    [Inject] 
+    private readonly IPoolDataService _poolDataService;
     
     [Button]
     public void HandDrawTest()
@@ -126,5 +129,11 @@ public class TutorialTest : MonoBehaviour
     public void TextKill()
     {
         _tutorialDataService.HideAllTutorialOfType<TextTutorial>(0.5f);
+    }
+    
+    [Button]
+    public void RemoveHandPool()
+    {
+        _poolDataService.RemovePool<HandTutorial>();
     }
 }

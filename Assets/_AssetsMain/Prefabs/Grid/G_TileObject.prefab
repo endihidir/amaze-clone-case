@@ -179,6 +179,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 2800000, guid: ca5853cc4794a524dbf3d5710202c182, type: 3}
   index: 0
+  _timeMeshRenderer: {fileID: 7777511156271834314}
+  _defaultMaterial: {fileID: 2100000, guid: a0a91ec5a5a5ec742b0f775e93d3f27d, type: 2}
 --- !u!4 &4788362541798644122 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2237055021668177710, guid: c43bbceb4025cb149825943c7b6e78fe,

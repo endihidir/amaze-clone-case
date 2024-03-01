@@ -124,7 +124,7 @@ namespace CodeMonkey.Utils {
             return buttonSprite;
         }
         public void DestroySelf() {
-            Object.Destroy(gameObject);
+            UnityEngine.Object.Destroy(gameObject);
         }
 
     }

@@ -24,12 +24,12 @@ namespace UnityBase.Extensions
         
         public static void DestroyChildren(this Transform parent) 
         {
-            parent.ForEveryChild(child => Object.Destroy(child.gameObject));
+            parent.ForEveryChild(child => UnityEngine.Object.Destroy(child.gameObject));
         }
         
         public static void DestroyChildrenImmediate(this Transform parent) 
         {
-            parent.ForEveryChild(child => Object.DestroyImmediate(child.gameObject));
+            parent.ForEveryChild(child => UnityEngine.Object.DestroyImmediate(child.gameObject));
         }
 
         public static void EnableChildren(this Transform parent) 

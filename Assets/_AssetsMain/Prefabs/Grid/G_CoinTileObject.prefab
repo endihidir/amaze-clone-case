@@ -94,7 +94,7 @@ PrefabInstance:
     - target: {fileID: 5010603665870258824, guid: c43bbceb4025cb149825943c7b6e78fe,
         type: 3}
       propertyPath: m_Name
-      value: G_PlayerTileObject
+      value: G_CoinTileObject
       objectReference: {fileID: 0}
     - target: {fileID: 6465817896940958206, guid: c43bbceb4025cb149825943c7b6e78fe,
         type: 3}
@@ -157,7 +157,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5010603665870258824, guid: c43bbceb4025cb149825943c7b6e78fe,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: -5920796158660155210}
+      addedObject: {fileID: 2769189345479118095}
   m_SourcePrefab: {fileID: 100100000, guid: c43bbceb4025cb149825943c7b6e78fe, type: 3}
 --- !u!1 &1797233740826496060 stripped
 GameObject:
@@ -165,7 +165,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 6735190332280458932}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-5920796158660155210
+--- !u!114 &2769189345479118095
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,11 +174,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1797233740826496060}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88d23802271846af9f0fc435d93f0326, type: 3}
+  m_Script: {fileID: 11500000, guid: af761a113beb40f2a2555822a7807b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 2800000, guid: 84b53c86c08376b42a475592469d0622, type: 3}
   index: 0
+  icon: {fileID: 0}
   _timeMeshRenderer: {fileID: 7777511156271834314}
   _defaultMaterial: {fileID: 2100000, guid: a0a91ec5a5a5ec742b0f775e93d3f27d, type: 2}
 --- !u!4 &4788362541798644122 stripped

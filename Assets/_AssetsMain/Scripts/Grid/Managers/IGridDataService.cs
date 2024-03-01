@@ -1,5 +1,5 @@
 
 public interface IGridDataService 
 {
-    public Grid<GridNode> Grid { get; }
+    public Grid<TileBase> Grid { get; }
 }

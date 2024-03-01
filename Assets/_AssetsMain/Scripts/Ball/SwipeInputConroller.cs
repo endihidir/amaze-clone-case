@@ -4,19 +4,19 @@ using UnityEngine;
 public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataService
 {
     private bool _detectSwipeOnlyAfterRelease = false;
-    private float _minDistanceForSwipe = 60f;
+    private float _minDistanceForSwipe = 90f;
     
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
 
-    private SwipeDirection _swipeDirection;
+    private Direction _direction;
 
     private bool _isDragging;
     public void Initialize() { }
     public void Start() { }
     public void Dispose() { }
     
-    public SwipeDirection GetSwipeDirection()
+    public Direction GetSwipeDirection()
     {
         foreach (var touch in Input.touches)
         {
@@ -59,7 +59,7 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
             CheckSwipe();
         }
 
-        return _swipeDirection;
+        return _direction;
     }
 
     private void CheckSwipe()
@@ -69,33 +69,33 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
 
         if (!(Mathf.Abs(deltaX) > _minDistanceForSwipe) && !(Mathf.Abs(deltaY) > _minDistanceForSwipe))
         {
-            _swipeDirection = SwipeDirection.None;
+            _direction = Direction.None;
             return;
         }
         
         if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
         {
-            _swipeDirection = deltaX > 0 ? SwipeDirection.Right : deltaX < 0 ? SwipeDirection.Left : SwipeDirection.None;
+            _direction = deltaX > 0 ? Direction.Right : deltaX < 0 ? Direction.Left : Direction.None;
         }
         else
         {
-            _swipeDirection = deltaY > 0 ? SwipeDirection.Up : deltaY < 0 ? SwipeDirection.Down : SwipeDirection.None;
+            _direction = deltaY > 0 ? Direction.Up : deltaY < 0 ? Direction.Down : Direction.None;
         }
 
         _fingerDownPosition = _fingerUpPosition;
     }
 
-    public Vector3 CastDirectionToVector(SwipeDirection swipeDirection) => swipeDirection switch
+    public Vector3 CastDirectionToVector(Direction direction) => direction switch
     {
-        SwipeDirection.Down => Vector3.back,
-        SwipeDirection.Up => Vector3.forward,
-        SwipeDirection.Right => Vector3.right,
-        SwipeDirection.Left => Vector3.left,
+        Direction.Down => Vector3.back,
+        Direction.Up => Vector3.forward,
+        Direction.Right => Vector3.right,
+        Direction.Left => Vector3.left,
         _ => Vector3.zero
     };
 }
 
-public enum SwipeDirection
+public enum Direction
 {
     None,
     Up,

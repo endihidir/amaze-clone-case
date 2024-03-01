@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2497067960830752329}
   - component: {fileID: 3377174293296346274}
+  - component: {fileID: 7714859438139307087}
+  - component: {fileID: -8581988451840741754}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -26,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2401487563157803272}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -45,8 +47,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c85722858b8d4a4409267c3713dbd3fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementDuration: 0.08
-  _canPassNextMovementInstantly: 0
+  _pathProvider: {fileID: 7714859438139307087}
+  _materialProvider: {fileID: -8581988451840741754}
+  _meshTransform: {fileID: 4410959660428997648}
+  _movementSpeed: 34
+  _canPassNextMovementInstantly: 1
+--- !u!114 &7714859438139307087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2401487563157803272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c834d351c342f645b2e6df153a2b0e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ballMaterialProvider: {fileID: -8581988451840741754}
+  _lastTileIndex: 0
+--- !u!114 &-8581988451840741754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2401487563157803272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 702fbdc81f2eea14094815249eba2fab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ballMeshRenderer: {fileID: 8983967819347232549}
+  _ballStampMaterials:
+  - {fileID: 2100000, guid: 61cd5a04db5353e408156c5b9cd2162a, type: 2}
+  - {fileID: 2100000, guid: ba6f379b6b37fb54baea6e4b58443b73, type: 2}
+  - {fileID: 2100000, guid: 2bcf4a00cde5b9345a41d9df4c40e6d7, type: 2}
+  - {fileID: 2100000, guid: 908ebc0731065544981b31bc1ba7debe, type: 2}
+  _currentStampMaterial: {fileID: 0}
 --- !u!1 &6351178927026630166
 GameObject:
   m_ObjectHideFlags: 0
@@ -74,8 +112,8 @@ Transform:
   m_GameObject: {fileID: 6351178927026630166}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_LocalPosition: {x: 0, y: 0.375, z: -0.05}
+  m_LocalScale: {x: 0.775, y: 0.775, z: 0.775}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4410959660428997648}
@@ -108,7 +146,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28a15e8c25fc397429751883762cd1c3, type: 2}
+  - {fileID: 2100000, guid: b23a0fbba0982f44aa6e71cea7e19731, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

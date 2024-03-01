@@ -60,7 +60,22 @@ namespace UnityBase.Manager
                 return (T)poolable;
             }
         }
-        
+
+        public void HidePoolable<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable
+        {
+            var key = poolable.PoolableObject.GetType();
+
+            if (!_cachedPools.TryGetValue(key, out var poolableObject))
+            {
+                if(readLogs)
+                    Debug.LogError($"You can not hide object because {key} is not exist in the list of prefabs.");
+                
+                return;
+            }
+            
+            poolableObject.HideObject(poolable, duration, delay, onComplete);
+        }
+
         public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable
         {
             var key = poolable.GetType();
@@ -207,16 +222,17 @@ namespace UnityBase.Manager
         private void CreateAllCashedPrefabs() => _cachedPools.Where(poolData=> !poolData.Value.IsLazy)
                                                              .ForEach(x => x.Value.CreatePool());
 
-        private PoolableObjectGroup Create<T>() where T : IPoolable
+        private PoolableObjectGroup Create<T>() where T : Component, IPoolable
         {
-            var key = typeof(T);
+            var type = typeof(T);
             var poolData = _poolManagerSo.poolDataSo;
-            var poolableAsset = poolData.FirstOrDefault(x => x.poolObject.GetComponent<IPoolable>() is T);
+            var poolableAsset = poolData.FirstOrDefault(x => x.poolObject.GetComponent<IPoolable>().PoolableObject.GetType() == type);
+            if (poolableAsset == null) return default;
             var poolableObjectGroup = new PoolableObjectGroup();
             var poolableObject = poolableAsset.poolObject.GetComponent<T>();
             poolableObjectGroup.Initialize(poolableObject, _poolableObjectsParent, poolableAsset.poolSize, poolableAsset.isLazy, _objectResolver);
             poolableObjectGroup.CreatePool();
-            _cachedPools.Add(key, poolableObjectGroup);
+            _cachedPools.Add(type, poolableObjectGroup);
             return poolableObjectGroup;
         }
     }
