@@ -33,24 +33,15 @@ namespace UnityBase.Manager
 
             var filePath = GetFilePath(key);
 
-            try
-            {
-                var jsonData = SerializationUtility.SerializeValue(data, DataFormat);
-                
-                File.WriteAllBytes(filePath, jsonData);
+            var jsonData = SerializationUtility.SerializeValue(data, DataFormat);
+            
+            File.WriteAllBytes(filePath, jsonData);
 
 #if UNITY_EDITOR
-                if(!Application.isPlaying)
-                    AssetDatabase.Refresh();
+            if(!Application.isPlaying)
+                AssetDatabase.Refresh();
 #endif
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                
-                return false;
-            }
+            return true;
         }
 
         public T Load<T>(string key, T defaultData = default, bool autoSaveDefaultData = true)
