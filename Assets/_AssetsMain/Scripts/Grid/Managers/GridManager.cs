@@ -4,9 +4,9 @@ using Unity.Mathematics;
 using UnityBase.EventBus;
 using UnityBase.Manager;
 using UnityBase.Manager.Data;
+using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterDataService
 {
@@ -18,9 +18,12 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     public static Action OnAllTilesPainted;
     
+    public static Action<CoinTileObject> OnCollectCoinTile;
+
     private EventBinding<GameStateData> _gameStateBinder = new EventBinding<GameStateData>();
     private Grid<TileBase> _gridData;
     private int[,] _serializedGridData;
+    private LevelSO _levelData;
     private string _levelKey;
     public int Width { get; set; }
     public int Height { get; set; }
@@ -51,25 +54,19 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     {
         _gameStateBinder.Add(OnStartGameStateTransition);
         EventBus<GameStateData>.AddListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
-
         OnAllTilesPainted += AllTilesPainted;
+        OnCollectCoinTile += CollectCoinTile;
     }
 
     public void Start() { }
     
     public void Dispose()
     {
+        _jsonDataService.Save(_levelKey, _serializedGridData);
         _gameStateBinder.Remove(OnStartGameStateTransition);
         EventBus<GameStateData>.RemoveListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
-        
-        OnAllTilesPainted += AllTilesPainted;
-    }
-
-    private void AllTilesPainted()
-    {
-        _currentLevelObject.DeactivateInput();
-        
-        _gameplayDataService.ChangeGameState(GameState.GameSuccessState, 0f);
+        OnAllTilesPainted -= AllTilesPainted;
+        OnCollectCoinTile -= CollectCoinTile;
     }
 
     private void OnStartGameStateTransition(GameStateData gameStateData)
@@ -99,7 +96,8 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     private void UpdateGridData()
     {
-        _levelKey = _levelDataService.GetCurrentLevelData().Key;
+        _levelData = _levelDataService.GetCurrentLevelData();
+        _levelKey = _levelData.Key;
         _serializedGridData = _jsonDataService.Load<int[,]>(_levelKey);
         Width = _serializedGridData.GetLength(0);
         Height = _serializedGridData.GetLength(1);
@@ -116,9 +114,9 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         _currentLevelObject.name = _levelKey;
         _currentLevelObject.transform.position = onLevelComplete ? new Vector3(_gridData.Width * (NodeSize + Padding.x) * 5f, 0f, 0f) : Vector3.zero;
 
-        for (int x = 0; x < Height; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int z = 0; z < Width; z++)
+            for (int z = 0; z < Height; z++)
             {
                 TileBase tileBase = _gridNodeSerializer.Deserialize<TileBase>(_serializedGridData[x, z]);
                 tileBase.index = _gridData.CalculateIndex(x, z);
@@ -131,15 +129,38 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
             }
         }
     }
+    
+    private void AllTilesPainted()
+    {
+        _gameplayDataService.ChangeGameState(GameState.GameSuccessState, 0f);
+    }
+    
+    private void CollectCoinTile(CoinTileObject coinTileObject)
+    {
+        for (int x = 0; x < _gridData.Width; x++)
+        {
+            for (int z = 0; z < _gridData.Height; z++)
+            {
+                var tileObject = _gridData.GetGridObject(x, z);
+
+                if (tileObject is not CoinTileObject coinTile) continue;
+                
+                if (coinTile == coinTileObject)
+                {
+                    _serializedGridData[x, z] = _gridNodeSerializer.SerializeOnCoinCollect(coinTileObject);
+                }
+            }
+        }
+    }
 
     private void ArrangeTile(TileBase tileBase)
     {
         if (tileBase is PlayerTileObject playerTileObject)
         {
             var ballController = _poolDataService.GetObject<BallController>(0f, 0f);
-            ballController.transform.parent = _currentLevelObject.BallsParent;
             ballController.transform.position = playerTileObject.transform.position;
-            ballController.PathProvider.SetTileIndex(playerTileObject.index);
+            ballController.transform.parent = _currentLevelObject.BallsParent;
+            ballController.PathProvider.SetLastTileIndex(playerTileObject.index);
             ballController.PathProvider.SetGridData(_gridData);
             playerTileObject.SetMaterial(ballController.MaterialProvider.CurrentStampMaterial);
         }

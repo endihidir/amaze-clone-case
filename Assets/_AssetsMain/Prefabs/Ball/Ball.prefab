@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2497067960830752329}
   - component: {fileID: 3377174293296346274}
+  - component: {fileID: -539814429018175238}
   - component: {fileID: 7714859438139307087}
   - component: {fileID: -8581988451840741754}
   m_Layer: 0
@@ -48,10 +49,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pathProvider: {fileID: 7714859438139307087}
+  _movementController: {fileID: -539814429018175238}
   _materialProvider: {fileID: -8581988451840741754}
-  _meshTransform: {fileID: 4410959660428997648}
-  _movementSpeed: 34
-  _canPassNextMovementInstantly: 1
+--- !u!114 &-539814429018175238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2401487563157803272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8640a73e175f25145b25129224fa31be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshHandlerTransform: {fileID: 4410959660428997648}
+  _movementSpeed: 40
 --- !u!114 &7714859438139307087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,7 +77,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c834d351c342f645b2e6df153a2b0e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ballMaterialProvider: {fileID: -8581988451840741754}
   _lastTileIndex: 0
 --- !u!114 &-8581988451840741754
 MonoBehaviour:

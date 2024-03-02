@@ -1,5 +1,4 @@
 using System;
-using Cysharp.Threading.Tasks;
 
 namespace UnityBase.Command
 {
@@ -10,9 +9,9 @@ namespace UnityBase.Command
         public abstract bool CanPassNextCommandInstantly { get; }
         protected MoveCommand(IMoveEntity moveEntity) => _moveEntity = moveEntity;
         public abstract void Record();
-        public abstract UniTask Execute();
-        public abstract UniTask Undo(bool directly);
-        public abstract UniTask Redo(bool directly);
+        public abstract void Execute(Action onComplete);
+        public abstract void Undo(bool directly, Action onComplete);
+        public abstract void Redo(bool directly, Action onComplete);
         public abstract void Cancel();
         public abstract void Dispose();
         public static T Create<T>(IMoveEntity moveEntity) where T : MoveCommand => (T)Activator.CreateInstance(typeof(T), moveEntity);

@@ -82,7 +82,7 @@ namespace UnityBase.Manager
                 
                 _isTransitionStarted = false;
             }
-            catch (OperationCanceledException e)
+            catch (Exception e)
             {
                 Debug.Log(e);
             }

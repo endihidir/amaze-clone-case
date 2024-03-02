@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-using Sirenix.Utilities.Editor;
+
 using UnityBase.Manager;
 
 #if UNITY_EDITOR
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 #endif
 
@@ -17,10 +17,11 @@ namespace UnityBase.ManagerSO
     [CreateAssetMenu(menuName = "Game/LevelManagement/LevelData", order = 1)]
     public class LevelSO : SerializedScriptableObject
     {
-        private const string FOLDER_PATH = "Assets/_AssetsMain/Prefabs/Grid";
-        
         public int index;
         public string Key => name;
+        
+#if UNITY_EDITOR
+        private const string FOLDER_PATH = "Assets/_AssetsMain/Prefabs/Grid";
 
         [Header("Grid Data")] [ShowIf("IsMatrixNullOrEmpty")]
         public int width;
@@ -44,6 +45,8 @@ namespace UnityBase.ManagerSO
         {
             var jsonDataManager = new JsonDataManager{ DataFormat = DataFormat.JSON };
             var gridNodeSerializer = new GridNodeSerializer(default);
+            width = gridLevel.GetLength(0);
+            height = gridLevel.GetLength(1);
             var serlializedNodeData = new int[width, height];
 
             for (int x = 0; x < width; x++)
@@ -59,7 +62,6 @@ namespace UnityBase.ManagerSO
             jsonDataManager.Save(Key, serlializedNodeData);
         }
 
-#if UNITY_EDITOR
         [Button]
         public void ResetToSavedFile()
         {
@@ -85,23 +87,22 @@ namespace UnityBase.ManagerSO
                 gridLevel = new GameObject[loadedData.GetLength(0), loadedData.GetLength(1)];
             }
 
-            for (int i = 0; i < loadedData.GetLength(0); i++)
+            for (int x = 0; x < loadedData.GetLength(0); x++)
             {
-                for (int j = 0; j < loadedData.GetLength(1); j++)
+                for (int z = 0; z < loadedData.GetLength(1); z++)
                 {
-                    var objectType = gridNodeSerializer.Deserialize(loadedData[i, j]);
+                    var objectType = gridNodeSerializer.Deserialize(loadedData[x, z]);
 
                     var selectPrefab = prefabs.FirstOrDefault(x => x.GetType() == objectType);
 
                     if (selectPrefab)
                     {
-                        gridLevel[i, j] = selectPrefab.gameObject;
+                        gridLevel[x, loadedData.GetLength(1) - 1 - z] = selectPrefab.gameObject;
                     }
                 }
             }
 
         }
-#endif
 
         [Button]
         public void DebugFileData()
@@ -124,13 +125,12 @@ namespace UnityBase.ManagerSO
                 var content = (component.icon != null) ? new GUIContent(component.icon) : GUIContent.none;
 
                 gridNode = (GameObject)SirenixEditorFields.UnityPreviewObjectField(rect, content, value, typeof(GameObject), false);
-
-#if UNITY_EDITOR
+                
                 if (component.icon != null)
                 {
                     EditorGUI.DrawPreviewTexture(rect, value.GetComponent<TileBase>().icon);
                 }
-#endif
+
             }
             else
             {
@@ -139,5 +139,6 @@ namespace UnityBase.ManagerSO
 
             return gridNode;
         }
+#endif
     }
 }

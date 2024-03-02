@@ -1,4 +1,5 @@
-﻿namespace UnityBase.Visitor
+﻿
+namespace UnityBase.Visitor
 {
     public interface IVisitor
     {

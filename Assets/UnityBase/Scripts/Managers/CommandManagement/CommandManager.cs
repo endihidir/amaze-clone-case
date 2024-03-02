@@ -48,25 +48,25 @@ namespace UnityBase.Manager
             commandGroup.Remove(commandRecorder);
         }
         
-        public void ExecuteAllRecords(string groupName, ICommand command)
+        public void ExecuteAllRecords(string groupName, ICommand command, Action onComplete)
         {
             if (!TryGetCommandGroup(groupName, out var commandGroup)) return;
             
-            commandGroup.ExecuteAllRecords(command);
+            commandGroup.ExecuteAllRecords(command, onComplete);
         }
 
-        public void UndoAllRecords(string groupName, bool directly = false)
+        public void UndoAllRecords(string groupName, bool directly, Action onComplete)
         {
             if (!TryGetCommandGroup(groupName, out var commandGroup)) return;
             
-            commandGroup.UndoAllRecords(directly);
+            commandGroup.UndoAllRecords(directly, onComplete);
         }
 
-        public void RedoAllRecords(string groupName, bool directly = false)
+        public void RedoAllRecords(string groupName, bool directly, Action onComplete)
         {
             if (!TryGetCommandGroup(groupName, out var commandGroup)) return;
 
-            commandGroup.RedoAllRecords(directly);
+            commandGroup.RedoAllRecords(directly, onComplete);
         }
         
         public void RecordAllCommands(string groupName, ICommand command)

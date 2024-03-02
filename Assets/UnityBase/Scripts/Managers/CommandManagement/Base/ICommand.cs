@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+using System;
 
 namespace UnityBase.Command
 {
@@ -7,9 +7,9 @@ namespace UnityBase.Command
         public bool IsInProgress { get; }
         public bool CanPassNextCommandInstantly { get; }
         public void Record();
-        public UniTask Execute();
-        public UniTask Undo(bool directly);
-        public UniTask Redo(bool directly);
+        public void Execute(Action onComplete);
+        public void Undo(bool directly, Action onComplete);
+        public void Redo(bool directly, Action onComplete);
         public void Cancel();
         public void Dispose();
     }

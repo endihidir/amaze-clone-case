@@ -25,7 +25,7 @@ public class LevelObject : MonoBehaviour, IPoolable
     public Transform BallsParent => _ballsParent;
     public void SetEndPos(float endXPos) => _endXPos = endXPos;
 
-    private IInputInitializeable[] _ballInputs;
+    private IInputInitializable[] _ballInputs;
 
     public void Show(float duration, float delay, Action onComplete)
     {
@@ -68,21 +68,20 @@ public class LevelObject : MonoBehaviour, IPoolable
         gameObject.SetActive(false);
     }
 
+    public void ActivateInput()
+    {
+        _ballInputs = GetComponentsInChildren<IInputInitializable>();
+        _ballInputs.ForEach(x => x.EnableInput(true));
+    }
+    
+    public void DeactivateInput()
+    {
+        _ballInputs.ForEach(x => x.EnableInput(true));
+    }
+    
     private void OnDestroy()
     {
         _moveTween?.Kill();
         _poolDataService.Remove(this);
-    }
-
-    private void ActivateInput()
-    {
-        _ballInputs = GetComponentsInChildren<IInputInitializeable>();
-
-        _ballInputs.ForEach(x => x.EnableInput(true));
-    }
-
-    public void DeactivateInput()
-    {
-        _ballInputs.ForEach(x => x.EnableInput(false));
     }
 }

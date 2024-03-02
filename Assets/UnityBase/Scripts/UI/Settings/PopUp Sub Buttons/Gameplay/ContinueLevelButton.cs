@@ -30,9 +30,7 @@ public class ContinueLevelButton : ButtonBehaviour
 
     protected override void OnClick()
     {
-        _popUpDataService.HidePopUp(_popUp);
-        
-        ChangeState();
+        _popUpDataService.HidePopUp(_popUp, 0.2f, 0f, ChangeState);
     }
 
     private void ChangeState()

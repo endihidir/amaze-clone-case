@@ -13,23 +13,23 @@ namespace UnityBase.Command
         private Vector3 _oldPosition;
         private bool _isInProgress;
         public override bool IsInProgress => _isInProgress;
-        public override bool CanPassNextCommandInstantly => _moveEntity?.CanPassNextMovementInstantly ?? false;
+        public override bool CanPassNextCommandInstantly => _moveEntity.CanPassNextMovementInstantly;
 
         private CancellationTokenSource _cancellationTokenSource;
         public ObjectMoveCommand(IMoveEntity moveEntity) : base(moveEntity) { }
 
-        public override void Record() => _newPosition = _moveEntity.NewPosition;
+        public override void Record() => _newPosition = _moveEntity.TargetPosition;
 
-        public override async UniTask Execute()
+        public override async void Execute(Action onComplete)
         {
             _oldPosition = _moveEntity.Transform.position;
             
-            _newPosition = _moveEntity.NewPosition;
+            _newPosition = _moveEntity.TargetPosition;
 
-            await MoveObjectAsync(_newPosition);
+            await MoveObjectAsync(_newPosition, onComplete);
         }
-
-        public override async UniTask Undo(bool directly)
+        
+        public override async void Undo(bool directly, Action onComplete)
         {
             if (directly)
             {
@@ -37,10 +37,10 @@ namespace UnityBase.Command
                 return;    
             }
             
-            await MoveObjectAsync(_oldPosition);
+            await MoveObjectAsync(_oldPosition, onComplete);
         }
 
-        public override async UniTask Redo(bool directly)
+        public override async void Redo(bool directly, Action onComplete)
         {
             if (directly)
             {
@@ -48,7 +48,7 @@ namespace UnityBase.Command
                 return;
             }
             
-            await MoveObjectAsync(_newPosition);
+            await MoveObjectAsync(_newPosition, onComplete);
         }
 
         public override void Cancel() => _cancellationTokenSource?.Cancel();
@@ -56,10 +56,10 @@ namespace UnityBase.Command
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
-            _moveEntity.MeshTransform.DOKill();
+            _moveEntity.MeshHandlerTransform.DOKill();
         }
 
-        private async UniTask MoveObjectAsync(Vector3 targetPosition)
+        private async UniTask MoveObjectAsync(Vector3 targetPosition, Action onComplete)
         {
             _isInProgress = true;
             
@@ -76,23 +76,28 @@ namespace UnityBase.Command
                 while (transform.position.Distance(targetPosition) > 0.01f)
                 {
                     transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveEntity.Speed * Time.deltaTime);
-                    await UniTask.Yield(PlayerLoopTiming.Update, _cancellationTokenSource.Token);
+                    
+                    await UniTask.WaitForSeconds(0f,false, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
                 }
 
                 transform.position = targetPosition;
+                
+                onComplete?.Invoke();
+
                 _isInProgress = false;
             }
             catch (Exception e)
             {
-                //Debug.Log(e);
+                Debug.Log(e);
+                
             }
         }
 
         private void BallBounceAnim(Vector3 dir)
         {
-            _moveEntity.MeshTransform.DOComplete();
-            _moveEntity.MeshTransform.DOPunchScale(dir * 0.65f, 0.35f, 25)
-                .OnComplete(()=> _moveEntity.MeshTransform.localScale = Vector3.one);
+            _moveEntity.MeshHandlerTransform.DOComplete();
+            _moveEntity.MeshHandlerTransform.DOPunchScale(dir * 0.65f, 0.35f, 25)
+                                            .OnComplete(()=> _moveEntity.MeshHandlerTransform.localScale = Vector3.one);
         }
     }
 }

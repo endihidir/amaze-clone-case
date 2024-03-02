@@ -32,9 +32,9 @@ namespace UnityBase.Command
             }
         }
 
-        public void ExecuteAllRecords(ICommand command) => _commandRecorders.ForEach(x=> x?.Execute(command));
-        public void UndoAllRecords(bool directly) => _commandRecorders.ForEach(x=> x?.Undo(directly));
-        public void RedoAllRecords(bool directly) => _commandRecorders.ForEach(x=> x?.Redo(directly));
+        public void ExecuteAllRecords(ICommand command, Action onComplete) => _commandRecorders.ForEach(x=> x?.Execute(command, onComplete));
+        public void UndoAllRecords(bool directly, Action onComplete) => _commandRecorders.ForEach(x=> x?.Undo(directly, onComplete));
+        public void RedoAllRecords(bool directly, Action onComplete) => _commandRecorders.ForEach(x=> x?.Redo(directly, onComplete));
         public void RecordAllCommands(ICommand command) => _commandRecorders.ForEach(x=> x?.RecordCommand(command));
         public void ExecuteAllRecordedCommands(bool directly) => _commandRecorders.ForEach(x=> x?.ExecuteRecordedCommands(directly));
 

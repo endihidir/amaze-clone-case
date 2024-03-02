@@ -13,9 +13,9 @@ namespace UnityBase.Command
         private readonly ICommandRecorder _commandRecorder;
 
         private ICommand _moveCommand;
-        public Transform MeshTransform => transform;
+        public Transform MeshHandlerTransform => transform;
         public Transform Transform => transform;
-        public Vector3 NewPosition => Input.mousePosition;
+        public Vector3 TargetPosition => Input.mousePosition;
         public float Speed => 0.2f;
         public bool CanPassNextMovementInstantly => true;
 
@@ -47,21 +47,21 @@ namespace UnityBase.Command
             {
                 _moveCommand = MoveCommand.Create<ObjectMoveCommand>(this);
 
-                _commandRecorder.Execute(_moveCommand);
+                _commandRecorder.Execute(_moveCommand, default);
             }
 
             if (Input.GetKeyDown(KeyCode.U))
             {
                 //_commandManager.UndoAllRecords("Endi");
 
-                _commandRecorder.Undo();
+                _commandRecorder.Undo(false, default);
             }
 
             if (Input.GetKeyDown(KeyCode.R))
             {
                 //_commandManager.RedoAllRecords("Endi");
 
-                _commandRecorder.Redo();
+                _commandRecorder.Redo(false,default);
             }
 
             //------------------------------------------------------------------------

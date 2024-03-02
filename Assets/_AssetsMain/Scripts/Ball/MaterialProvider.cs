@@ -2,7 +2,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class BallMaterialProvider : MonoBehaviour
+public class MaterialProvider : MonoBehaviour
 {
     [SerializeField] private MeshRenderer _ballMeshRenderer;
 

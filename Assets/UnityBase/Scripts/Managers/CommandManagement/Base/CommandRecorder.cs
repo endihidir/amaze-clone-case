@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace UnityBase.Command
@@ -12,7 +13,7 @@ namespace UnityBase.Command
         private int _savedCommandCounter;
         private bool _isSavedExecutionStarted;
 
-        public void Execute(ICommand command)
+        public void Execute(ICommand command, Action onComplete)
         {
             if (IsCommandInProgress()) return;
 
@@ -20,14 +21,14 @@ namespace UnityBase.Command
 
             _activeCommand = command;
 
-            _activeCommand.Execute();
+            _activeCommand.Execute(onComplete);
 
             _undoStack.Push(_activeCommand);
 
             _redoStack.Clear();
         }
 
-        public void Undo(bool directly = false)
+        public void Undo(bool directly, Action onComplete)
         {
             if (IsCommandInProgress()) return;
 
@@ -37,12 +38,12 @@ namespace UnityBase.Command
 
             if (IsActiveCommandNotValidate(_redoStack)) return;
 
-            _activeCommand.Undo(directly);
+            _activeCommand.Undo(directly, onComplete);
 
             _redoStack.Push(_activeCommand);
         }
 
-        public void Redo(bool directly = false)
+        public void Redo(bool directly, Action onComplete)
         {
             if (IsCommandInProgress()) return;
 
@@ -52,7 +53,7 @@ namespace UnityBase.Command
 
             if (IsActiveCommandNotValidate(_undoStack)) return;
 
-            _activeCommand.Redo(directly);
+            _activeCommand.Redo(directly, onComplete);
 
             _undoStack.Push(_activeCommand);
         }
@@ -66,11 +67,13 @@ namespace UnityBase.Command
             _savedCommandCounter++;
         }
 
-        public async void ExecuteRecordedCommands(bool directly = false)
+        public void ExecuteRecordedCommands(bool directly = false)
         {
             if (_isSavedExecutionStarted) return;
 
             _isSavedExecutionStarted = true;
+
+            int counter = 0;
 
             for (int i = 0; i < _savedCommandCounter; i++)
             {
@@ -78,24 +81,30 @@ namespace UnityBase.Command
 
                 if (isThereCommand)
                 {
-                    await command.Redo(directly);
+                    command.Redo(directly,()=> IsAllRecordedCommandExecuted(ref counter));
                 }
             }
-
-            _savedCommandCounter = 0;
-
-            _isSavedExecutionStarted = false;
         }
+
 
         private void UpdateActiveCommand(Stack<ICommand> stack)
         {
             _activeCommand?.Cancel();
             _activeCommand = stack.Pop();
         }
+        private void IsAllRecordedCommandExecuted(ref int counter)
+        {
+            counter++;
+            if (counter != _savedCommandCounter) return;
+            
+            _savedCommandCounter = 0;
+            _isSavedExecutionStarted = false;
+        }
 
         private bool IsCommandInProgress()
         {
             if (_activeCommand is null) return false;
+            
             return _activeCommand.IsInProgress && !_activeCommand.CanPassNextCommandInstantly;
         } 
         

@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ae9bb4403a043799d8ddfa39b18982, type: 3}
   m_Name: GameManagerData
   m_EditorClassIdentifier: 
-  menuSceneAssetSo: {fileID: 11400000, guid: 62da281b61a184f80a9e525812e02235, type: 2}
   splashScreen: {fileID: 0}
   targetFrameRate: 60
   isMultiTouchEnabled: 0
