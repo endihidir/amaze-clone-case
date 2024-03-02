@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using Sirenix.Serialization;
 using UnityBase.Service;
 
@@ -33,9 +34,9 @@ namespace UnityBase.Manager
 
             var filePath = GetFilePath(key);
 
-            var jsonData = SerializationUtility.SerializeValue(data, DataFormat);
+            var jsonData = JsonConvert.SerializeObject(data);
             
-            File.WriteAllBytes(filePath, jsonData);
+            File.WriteAllText(filePath, jsonData);
 
 #if UNITY_EDITOR
             if(!Application.isPlaying)
@@ -60,9 +61,9 @@ namespace UnityBase.Manager
                 return defaultData;
             }
 
-            var jsonData = File.ReadAllBytes(filePath);
+            var jsonData = File.ReadAllText(filePath);
                 
-            var data = SerializationUtility.DeserializeValue<T>(jsonData, DataFormat);
+            var data = JsonConvert.DeserializeObject<T>(jsonData);
             
             return data;
         }
@@ -75,9 +76,9 @@ namespace UnityBase.Manager
             
             try
             {
-                var jsonData = SerializationUtility.SerializeValue(data, DataFormat);
+                var jsonData = JsonConvert.SerializeObject(data);
                 
-                await File.WriteAllBytesAsync(filePath, jsonData);
+                await File.WriteAllTextAsync(filePath, jsonData);
                 
 #if UNITY_EDITOR
                 if(!Application.isPlaying)
@@ -112,9 +113,9 @@ namespace UnityBase.Manager
 
             try
             {
-                var jsonData = await File.ReadAllBytesAsync(filePath);
+                var jsonData = await File.ReadAllTextAsync(filePath);
                 
-                var data = SerializationUtility.DeserializeValue<T>(jsonData, DataFormat);
+                var data = JsonConvert.DeserializeObject<T>(jsonData);
                 
                 return data;
 

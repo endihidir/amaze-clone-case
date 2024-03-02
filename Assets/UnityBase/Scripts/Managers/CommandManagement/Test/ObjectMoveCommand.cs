@@ -88,7 +88,7 @@ namespace UnityBase.Command
             }
             catch (Exception e)
             {
-                Debug.Log(e);
+                //Debug.Log(e);
                 
             }
         }
@@ -96,7 +96,7 @@ namespace UnityBase.Command
         private void BallBounceAnim(Vector3 dir)
         {
             _moveEntity.MeshHandlerTransform.DOComplete();
-            _moveEntity.MeshHandlerTransform.DOPunchScale(dir * 0.65f, 0.35f, 25)
+            _moveEntity.MeshHandlerTransform.DOPunchScale(dir, 0.35f, 25, 5f)
                                             .OnComplete(()=> _moveEntity.MeshHandlerTransform.localScale = Vector3.one);
         }
     }

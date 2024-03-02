@@ -54,6 +54,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     {
         _gameStateBinder.Add(OnStartGameStateTransition);
         EventBus<GameStateData>.AddListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
+
         OnAllTilesPainted += AllTilesPainted;
         OnCollectCoinTile += CollectCoinTile;
     }
@@ -62,9 +63,12 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     
     public void Dispose()
     {
-        _jsonDataService.Save(_levelKey, _serializedGridData);
+        if(_levelData.hasUpdatableData)
+            _jsonDataService.Save(_levelKey, _serializedGridData);
+        
         _gameStateBinder.Remove(OnStartGameStateTransition);
         EventBus<GameStateData>.RemoveListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
+        
         OnAllTilesPainted -= AllTilesPainted;
         OnCollectCoinTile -= CollectCoinTile;
     }
@@ -89,6 +93,9 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     private void HideCurrentLevel()
     {
+        if(_levelData.hasUpdatableData)
+            _jsonDataService.Save(_levelKey, _serializedGridData);
+        
         var endXPos = _gridData.Width * (NodeSize + Padding.x) * -5;
         _currentLevelObject.SetEndPos(endXPos);
         _poolDataService.HideObject(_currentLevelObject, 0.75f, 0f);
@@ -97,6 +104,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     private void UpdateGridData()
     {
         _levelData = _levelDataService.GetCurrentLevelData();
+        _levelData.Initialize();
         _levelKey = _levelData.Key;
         _serializedGridData = _jsonDataService.Load<int[,]>(_levelKey);
         Width = _serializedGridData.GetLength(0);

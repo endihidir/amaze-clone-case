@@ -18,9 +18,10 @@ namespace UnityBase.ManagerSO
     public class LevelSO : SerializedScriptableObject
     {
         public int index;
-        public string Key => name;
         
-#if UNITY_EDITOR
+        public bool hasUpdatableData;
+        public string Key => name.Replace(" ","");
+
         private const string FOLDER_PATH = "Assets/_AssetsMain/Prefabs/Grid";
 
         [Header("Grid Data")] [ShowIf("IsMatrixNullOrEmpty")]
@@ -32,7 +33,12 @@ namespace UnityBase.ManagerSO
         public GameObject[,] gridLevel;
 
         private bool IsMatrixNullOrEmpty => gridLevel == null || gridLevel.Length < 1;
-      
+
+        private bool IsInitialized
+        {
+            get => PlayerPrefs.GetInt("Initialized" + Key, 0) == 1;
+            set => PlayerPrefs.SetInt("Initialized" + Key, value ? 1 : 0);
+        }
 
         [Button, ShowIf("IsMatrixNullOrEmpty")]
         public void CreateGrid()
@@ -41,8 +47,12 @@ namespace UnityBase.ManagerSO
         }
 
         [Button]
-        public void SaveGridToJsonFile()
+        public void Initialize()
         {
+            if(IsInitialized) return;
+            
+            IsInitialized = true;
+            
             var jsonDataManager = new JsonDataManager{ DataFormat = DataFormat.JSON };
             var gridNodeSerializer = new GridNodeSerializer(default);
             width = gridLevel.GetLength(0);
@@ -61,7 +71,7 @@ namespace UnityBase.ManagerSO
 
             jsonDataManager.Save(Key, serlializedNodeData);
         }
-
+#if UNITY_EDITOR
         [Button]
         public void ResetToSavedFile()
         {

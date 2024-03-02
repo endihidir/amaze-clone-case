@@ -2,7 +2,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityBase.Controller;
-using UnityBase.Extensions;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
@@ -15,48 +14,69 @@ namespace UnityBase.Manager
 {
     public class SceneManager : ISceneDataService, IAppPresenterDataService
     {
-        private readonly SceneManagerSO _sceneManagerSo;
-        
         public static Action<SceneType> OnSceneLoadComplete;
 
-        private SceneAssetSO _currentSceneAssetSo;
-        
         private LoadingSceneController _loadingSceneController;
 
-        private bool _sceneLoadInProgress, _useLoadingScene;
+        private float _progressAnimationMultiplier = 10f;
 
-        private AsyncOperationHandle<SceneInstance> _asyncLoadOperationHandle;
+        private SceneAssetSO _currentSceneAssetSo;
 
-        private float _currentProgressValue, _targetProgressValue, _progressMultiplier = 0.1f, _progressAnimationMultiplier = 10f;
+        private bool _sceneLoadInProgress;
+
+        private SceneInstance _sceneInstance;
+
+        private AsyncOperationHandle<SceneInstance> _asyncLoadOperationHandle, _asyncUnloadOperationHandle;
+
+        private float _currentProgressValue, _targetProgressValue;
+
+        private float _progressMultiplier = 0.1f;
+
+        private bool _useLoadingScene;
 
         private CancellationTokenSource _cancellationTokenSource;
-        private event Action<float> _onLoadUpdate;
-        public SceneManager(ManagerDataHolderSO managerDataHolderSo) => _sceneManagerSo = managerDataHolderSo.sceneManagerSo;
-        
-        ~SceneManager() => Dispose();
 
-        public void Initialize()
+        private event Action<float> _onLoadUpdate;
+
+        private SceneManagerSO _sceneManagerSo;
+
+        public SceneManager(ManagerDataHolderSO managerDataHolderSo)
         {
+            _sceneManagerSo = managerDataHolderSo.sceneManagerSo;
+
             _progressAnimationMultiplier = _sceneManagerSo.progressAnimationMultiplier;
 
             _loadingSceneController = new LoadingSceneController(_sceneManagerSo.GetSceneAsset(SceneType.Loading));
         }
 
-        public void Start() { }
-        
-        public void Dispose()
+        ~SceneManager()
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+        }
 
-            _asyncLoadOperationHandle = default;
-            _currentSceneAssetSo = null;
-            _loadingSceneController = null;
+        public void Initialize()
+        {
+
+        }
+
+        public void Start()
+        {
+            
+        }
+
+        public void Dispose()
+        {
+            
         }
 
         public async void LoadSceneAsync(SceneType sceneType, bool useLoadingScene = false, float progressMultiplier = 1)
         {
-            if (_sceneLoadInProgress) return;
+            if (_sceneLoadInProgress)
+            {
+                return;
+            }
 
             _useLoadingScene = useLoadingScene;
 
@@ -66,12 +86,7 @@ namespace UnityBase.Manager
 
             if (_asyncLoadOperationHandle.IsValid())
             {
-                var isSucceed = await UnloadSceneAsync();
-
-                if (isSucceed)
-                {
-                    await LoadSceneAsync();
-                }
+                UnloadSceneAsync();
             }
             else
             {
@@ -79,13 +94,25 @@ namespace UnityBase.Manager
             }
         }
 
-        private async UniTask<bool> UnloadSceneAsync()
+        private void UnloadSceneAsync()
         {
-            var asyncUnloadOperationHandle = Addressables.UnloadSceneAsync(_asyncLoadOperationHandle.Result);
+            _asyncUnloadOperationHandle = Addressables.UnloadSceneAsync(_sceneInstance);
 
-            await asyncUnloadOperationHandle.Task;
+            _asyncUnloadOperationHandle.Completed += OnUnloadSceneAsyncCompleted;
+        }
 
-            return !asyncUnloadOperationHandle.IsValid();
+        private async void OnUnloadSceneAsyncCompleted(AsyncOperationHandle<SceneInstance> asyncOperationHandle)
+        {
+            if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                _asyncUnloadOperationHandle.Completed -= OnUnloadSceneAsyncCompleted;
+
+                await LoadSceneAsync();
+            }
+            else
+            {
+                Debug.Log("Failed to Unload!");
+            }
         }
 
         private async UniTask LoadSceneAsync()
@@ -96,47 +123,72 @@ namespace UnityBase.Manager
 
             _targetProgressValue = 0;
 
-            try
+            if (_useLoadingScene)
             {
+                await _loadingSceneController.Initialize();
+            }
+
+            _asyncLoadOperationHandle = Addressables.LoadSceneAsync(_currentSceneAssetSo.sceneReference, LoadSceneMode.Additive, false);
+
+            var delay = TimeSpan.FromSeconds(0.1f);
+
+            await WaitProgress(delay);
+
+            _asyncLoadOperationHandle.Completed += OnLoadSceneAsyncCompleted;
+        }
+
+        private async void OnLoadSceneAsyncCompleted(AsyncOperationHandle<SceneInstance> asyncOperationHandle)
+        {
+            if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                _asyncLoadOperationHandle.Completed -= OnLoadSceneAsyncCompleted;
+
+                _sceneLoadInProgress = false;
+
+                await _asyncLoadOperationHandle.Result.ActivateAsync();
+
+                _sceneInstance = asyncOperationHandle.Result;
+
                 if (_useLoadingScene)
                 {
-                    await _loadingSceneController.InitializeAsync();
+                    _loadingSceneController.ReleaseLoadingScene();
                 }
-
-                _asyncLoadOperationHandle = Addressables.LoadSceneAsync(_currentSceneAssetSo.sceneReference,
-                    LoadSceneMode.Additive, false);
-
-                await WaitProgressAsync(0.1f);
-
-                if (_asyncLoadOperationHandle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    await _asyncLoadOperationHandle.Result.ActivateAsync();
-
-                    if (_useLoadingScene)
-                    {
-                        await _loadingSceneController.ReleaseLoadingSceneAsync();
-                    }
-
-                    _sceneLoadInProgress = false;
-                }
-            } catch (Exception e) { Debug.Log(e); }
-        }
-
-        private async UniTask WaitProgressAsync(float delay)
-        {
-            CancellationTokenExtentions.Refresh(ref _cancellationTokenSource);
-            
-            do
+            }
+            else
             {
-                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
-                _targetProgressValue = _asyncLoadOperationHandle.PercentComplete / 0.9f;
-                var multiplier = _progressMultiplier * _progressAnimationMultiplier;
-                _currentProgressValue = Mathf.MoveTowards(_currentProgressValue, _targetProgressValue, multiplier * Time.deltaTime);
-                _onLoadUpdate?.Invoke(_currentProgressValue);
-
-            } while (!Mathf.Approximately(_currentProgressValue, _targetProgressValue));
+                Debug.Log("Failed to load!");
+            }
         }
 
-        public void OnLoadUpdate(Action<float> act) => _onLoadUpdate = act;
+        private async UniTask WaitProgress(TimeSpan delay)
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            try
+            {
+                do
+                {
+                    await UniTask.Delay(delay, DelayType.DeltaTime, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
+
+                    _targetProgressValue = _asyncLoadOperationHandle.PercentComplete / 0.9f;
+
+                    var multiplier = _progressMultiplier * _progressAnimationMultiplier;
+
+                    _currentProgressValue = Mathf.MoveTowards(_currentProgressValue, _targetProgressValue, multiplier * Time.deltaTime);
+
+                    _onLoadUpdate?.Invoke(_currentProgressValue);
+
+                } while (!Mathf.Approximately(_currentProgressValue, _targetProgressValue));
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+        }
+
+        public void OnLoadUpdate(Action<float> act)
+        {
+            _onLoadUpdate = act;
+        }
     }
 }

@@ -13,9 +13,20 @@ namespace UnityBase.Controller
         private SceneAssetSO _loadingScene;
 
         private AsyncOperationHandle<SceneInstance> _asyncOperationHandle;
-        public LoadingSceneController(SceneAssetSO loadingScene) => _loadingScene = loadingScene;
-        ~LoadingSceneController() { }
-        public async UniTask InitializeAsync()
+
+        private SceneInstance _sceneInstance;
+
+        public LoadingSceneController(SceneAssetSO loadingScene)
+        {
+            _loadingScene = loadingScene;
+        }
+
+        ~LoadingSceneController()
+        {
+
+        }
+
+        public async UniTask Initialize()
         {
             _asyncOperationHandle = _loadingScene.sceneReference.LoadSceneAsync(LoadSceneMode.Additive);
 
@@ -24,7 +35,19 @@ namespace UnityBase.Controller
             _asyncOperationHandle.Completed += OnLoadingSceneLoad;
         }
 
-        private void OnLoadingSceneLoad(AsyncOperationHandle<SceneInstance> handle) => _asyncOperationHandle.Completed -= OnLoadingSceneLoad;
-        public async UniTask ReleaseLoadingSceneAsync() => await Addressables.UnloadSceneAsync(_asyncOperationHandle.Result);
+        private void OnLoadingSceneLoad(AsyncOperationHandle<SceneInstance> handle)
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                _sceneInstance = handle.Result;
+            }
+        }
+
+        public void ReleaseLoadingScene()
+        {
+            Addressables.UnloadSceneAsync(_sceneInstance);
+
+            _asyncOperationHandle.Completed -= OnLoadingSceneLoad;
+        }
     }
 }

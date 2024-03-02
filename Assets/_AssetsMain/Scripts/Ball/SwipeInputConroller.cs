@@ -2,9 +2,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using static PlayerInputActions;
 
-public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataService, IPlayerActions
+public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataService
 {
     private bool _detectSwipeOnlyAfterRelease = false;
     private float _minDistanceForSwipe = Screen.width * 0.1f;
@@ -13,17 +12,6 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
     private Direction _direction;
 
     private bool _isDragging;
-
-    private readonly PlayerInputActions _playerInputActions;
-
-    public SwipeInputConroller()
-    {
-        _playerInputActions = new PlayerInputActions();
-        _playerInputActions.Player.SetCallbacks(this);
-        _playerInputActions.Enable();
-    }
-
-    ~SwipeInputConroller() => _playerInputActions.Disable();
 
     public void Initialize() { }
     public void Start() { }
@@ -36,24 +24,24 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
             ResetInput();
             return _direction;
         }
-        
-        if (_playerInputActions.Player.MouseLeftButton.WasPressedThisFrame())
+
+        if (Input.GetMouseButtonDown(0))
         {
             _isDragging = true;
-            _fingerDownPosition = _playerInputActions.Player.MousePosition.ReadValue<Vector2>();
-            _fingerUpPosition = _playerInputActions.Player.MousePosition.ReadValue<Vector2>();
+            _fingerDownPosition = Input.mousePosition;
+            _fingerUpPosition = Input.mousePosition;
         }
 
-        if (_isDragging && _playerInputActions.Player.MouseLeftButton.IsPressed())
+        if (_isDragging && Input.GetMouseButton(0))
         {
-            _fingerUpPosition = _playerInputActions.Player.MousePosition.ReadValue<Vector2>();
+            _fingerUpPosition = Input.mousePosition;
             CheckSwipe();
         }
 
-        if (_playerInputActions.Player.MouseLeftButton.WasReleasedThisFrame())
+        if (Input.GetMouseButtonUp(0))
         {
             _isDragging = false;
-            _fingerUpPosition = _playerInputActions.Player.MousePosition.ReadValue<Vector2>();
+            _fingerUpPosition = Input.mousePosition;
             CheckSwipe();
         }
 
@@ -99,16 +87,6 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
         Direction.Left => Vector3.left,
         _ => Vector3.zero
     };
-
-    public void OnMousePosition(InputAction.CallbackContext context)
-    {
-        
-    }
-
-    public void OnMouseLeftButton(InputAction.CallbackContext context)
-    {
-        
-    }
 }
 
 public enum Direction
