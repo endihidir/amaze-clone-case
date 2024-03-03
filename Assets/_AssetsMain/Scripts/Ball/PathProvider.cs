@@ -11,7 +11,7 @@ public class PathProvider : MonoBehaviour
     public void SetGridData(Grid<TileBase> gridData) => _activeGridData = gridData;
     public Grid<TileBase> GetGridData => _activeGridData;
     
-    public void SetLastTileIndex(int gridIndex) => _lastTileIndex = gridIndex;
+    public void SetTileIndex(int gridIndex) => _lastTileIndex = gridIndex;
     public int GetLastTileIndex => _lastTileIndex;
 
     public IList<TileObject> GetTilePath(Direction direction)

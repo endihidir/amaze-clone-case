@@ -13,20 +13,16 @@ public class LevelObject : MonoBehaviour, IPoolable
     
     [SerializeField] private Transform _gridsParent, _ballsParent;
 
+    private float _endXPos;
+    private Tween _moveTween;
+    private IInputInitializable[] _ballInputs;
+    public Transform GridsParent => _gridsParent;
+    public Transform BallsParent => _ballsParent;
+    
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
     
-    private float _endXPos;
-    
-    private Tween _moveTween;
-    public Transform GridsParent => _gridsParent;
-
-    public Transform BallsParent => _ballsParent;
-    public void SetEndPos(float endXPos) => _endXPos = endXPos;
-
-    private IInputInitializable[] _ballInputs;
-
     public void Show(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(true);
@@ -39,12 +35,6 @@ public class LevelObject : MonoBehaviour, IPoolable
                               .SetEase(Ease.InOutQuad);
     }
 
-    private void OnShowComplete(Action onComplete)
-    {
-        ActivateInput();
-        onComplete?.Invoke();
-    }
-
     public void Hide(float duration, float delay, Action onComplete)
     {
         _moveTween?.Kill();
@@ -55,13 +45,18 @@ public class LevelObject : MonoBehaviour, IPoolable
                               .SetEase(Ease.InOutQuad);
     }
 
+    private void OnShowComplete(Action onComplete)
+    {
+        ActivateInput();
+        onComplete?.Invoke();
+    }
     private void OnHideComplete(Action onComplete)
     {
         var allTileResettables = GetComponentsInChildren<IResettable>();
         allTileResettables.ForEach(x => x.Reset());
         
         var allPoolables = GetComponentsInChildren<IPoolable>();
-        allPoolables.ForEach(x => _poolDataService.HidePoolable(x, 0f,0f));
+        allPoolables.ForEach(x => _poolDataService.HideObject(x, 0f,0f));
         
         onComplete?.Invoke();
         
@@ -77,6 +72,10 @@ public class LevelObject : MonoBehaviour, IPoolable
     public void DeactivateInput()
     {
         _ballInputs.ForEach(x => x.EnableInput(true));
+    }
+    public void SetEndXPos(float endXPos)
+    {
+        _endXPos = endXPos;
     }
     
     private void OnDestroy()

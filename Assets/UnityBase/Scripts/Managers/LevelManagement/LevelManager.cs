@@ -4,6 +4,7 @@ using UnityBase.Manager.Data;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UnityBase.Manager
 {
@@ -140,8 +141,6 @@ namespace UnityBase.Manager
 
         private void UpdateLevel()
         {
-            // if there is a chapter system, activate below statement !!!
-
             //if (LastSelectedChapterIndex != LastUnlockedChapterIndex || LastSelectedLevelIndex != LastUnlockedLevelIndex) return;
 
             LevelText++;
@@ -156,7 +155,9 @@ namespace UnityBase.Manager
                 {
                     LastUnlockedChapterIndex = _chapterData.Length - 1;
 
-                    LastUnlockedLevelIndex = GetLastUnlockedChapterData().levelData.Length - 1;
+                    var levelDataLenght = GetLastUnlockedChapterData().levelData.Length - 1;
+                    
+                    LastUnlockedLevelIndex = Random.Range(0, levelDataLenght);
                 }
             }
             

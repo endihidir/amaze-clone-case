@@ -9,34 +9,32 @@ using UnityEngine;
 
 public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterDataService
 {
+    public static Action OnAllTilesPainted;
+    public static Action<CoinTileObject> OnCollectCoinTile;
+    private EventBinding<GameStateData> _gameStateBinder = new EventBinding<GameStateData>();
+   
     private readonly IPoolDataService _poolDataService;
     private readonly ILevelDataService _levelDataService;
     private readonly ITileSerializer _tileSerializer;
     private readonly IJsonDataService _jsonDataService;
     private readonly IGameplayDataService _gameplayDataService;
-
-    public static Action OnAllTilesPainted;
     
-    public static Action<CoinTileObject> OnCollectCoinTile;
-
-    private EventBinding<GameStateData> _gameStateBinder = new EventBinding<GameStateData>();
+    private LevelSO _levelData;
     private Grid<TileBase> _gridData;
     private int[,] _serializedGridData;
-    private LevelSO _levelData;
     private string _levelKey;
+    
+    private LevelObject _currentLevelObject;
+    
+    private Tag_GameArena _gameArena;
     public int Width { get; set; }
     public int Height { get; set; }
     public float NodeSize { get; set; }
     public float3 Padding { get; set; }
     public float3 OriginPos { get; set; }
     public Grid<TileBase> Grid => _gridData;
-
-    private LevelObject _currentLevelObject;
-
-    private Tag_GameArena _gameArena;
-
-    public GridManager(ILevelDataService levelDataService, ITileSerializer tileSerializer, IJsonDataService jsonDataService, 
-        IPoolDataService poolDataService, IGameplayDataService gameplayDataService)
+    
+    public GridManager(ILevelDataService levelDataService, ITileSerializer tileSerializer, IJsonDataService jsonDataService, IPoolDataService poolDataService, IGameplayDataService gameplayDataService)
     {
         _levelDataService = levelDataService;
         _tileSerializer = tileSerializer;
@@ -80,9 +78,6 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         }
         else if (isPassedToNextLevel)
         {
-            if(_levelData.hasUpdateableData) 
-                _levelData.IsInitialized = false;
-            
             HideCurrentLevel();
             UpdateGridData();
             GenerateGrid(true);
@@ -91,8 +86,9 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     private void HideCurrentLevel()
     {
+        _levelData.ResetUpdatedLevelData();
         var endXPos = _gridData.Width * (NodeSize + Padding.x) * -5;
-        _currentLevelObject.SetEndPos(endXPos);
+        _currentLevelObject.SetEndXPos(endXPos);
         _poolDataService.HideObject(_currentLevelObject, 0.75f, 0f);
     }
 
@@ -106,7 +102,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         Height = _serializedGridData.GetLength(1);
         NodeSize = 1f;
         Padding = 0f;
-        OriginPos = new float3(GetOriginXPos(), 0f, GetOriginZPos());
+        OriginPos = new float3(GetGridOriginXPos(), 0f, GetGridOriginZPos());
         _gridData = new Grid<TileBase>(this);
     }
 
@@ -145,13 +141,11 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
             for (int z = 0; z < _gridData.Height; z++)
             {
                 var tileObject = _gridData.GetGridObject(x, z);
-
+                
                 if (tileObject is not CoinTileObject coinTile) continue;
                 
                 if (coinTile == coinTileObject)
-                {
                     _serializedGridData[x, z] = _tileSerializer.SerializeOnCoinCollect(coinTileObject);
-                }
             }
         }
         
@@ -165,20 +159,20 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
             var ballController = _poolDataService.GetObject<BallController>(0f, 0f);
             ballController.transform.position = playerTileObject.transform.position;
             ballController.transform.parent = _currentLevelObject.BallsParent;
-            ballController.PathProvider.SetLastTileIndex(playerTileObject.index);
+            ballController.PathProvider.SetTileIndex(playerTileObject.index);
             ballController.PathProvider.SetGridData(_gridData);
             playerTileObject.SetMaterial(ballController.MaterialProvider.CurrentStampMaterial);
         }
     }
 
-    private float GetOriginXPos()
+    private float GetGridOriginXPos()
     {
         var offsetMultiplier = (NodeSize + Padding.x);
         var xPos = ((offsetMultiplier - (Width * offsetMultiplier)) * 0.5f);
         return xPos;
     }
 
-    private float GetOriginZPos()
+    private float GetGridOriginZPos()
     {
         var offsetMultiplier = (NodeSize + Padding.z);
         var zPos = ((offsetMultiplier - (Height * offsetMultiplier)) * 0.5f);

@@ -44,7 +44,7 @@ namespace UnityBase.Manager
             _objectResolver = null;
         }
 
-        public T GetObject<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable
+        public T GetObject<T>(float duration, float delay, Action onComplete = default) where T : IPoolable
         {
             var key = typeof(T);
 
@@ -61,7 +61,7 @@ namespace UnityBase.Manager
             }
         }
 
-        public void HidePoolable<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable
+        public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable
         {
             var key = poolable.PoolableObject.GetType();
 
@@ -76,22 +76,7 @@ namespace UnityBase.Manager
             poolableObject.HideObject(poolable, duration, delay, onComplete);
         }
 
-        public void HideObject<T>(T poolable, float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable
-        {
-            var key = poolable.GetType();
-
-            if (!_cachedPools.TryGetValue(key, out var poolableObject))
-            {
-                if(readLogs)
-                    Debug.LogError($"You can not hide object because {key} is not exist in the list of prefabs.");
-                
-                return;
-            }
-            
-            poolableObject.HideObject(poolable, duration, delay, onComplete);
-        }
-
-        public void HideAllObjectsOfType<T>(float duration, float delay, Action onComplete = default, bool readLogs = false) where T : Component, IPoolable
+        public void HideAllObjectsOfType<T>(float duration, float delay, Action onComplete = default, bool readLogs = false) where T : IPoolable
         {
             var key = typeof(T);
 
@@ -106,7 +91,7 @@ namespace UnityBase.Manager
             poolableObjectGroup.HideAllObjects(duration, delay, onComplete);
         }
         
-        public void HideAllTypeOf<T>(float duration, float delay, Action onComplete = default) where T : Component, IPoolable
+        public void HideAllTypeOf<T>(float duration, float delay, Action onComplete = default) where T : IPoolable
         {
             foreach (var poolableObject in _cachedPools)
             {
@@ -125,11 +110,11 @@ namespace UnityBase.Manager
             }
         }
         
-        public void Remove<T>(T poolable, bool readLogs = false) where T : Component, IPoolable
+        public void Remove<T>(T poolable, bool readLogs = false) where T : IPoolable
         {
             if(_isDisposed) return;
             
-            var key = poolable.GetType();
+            var key = poolable.PoolableObject.GetType();
 
             if (!_cachedPools.TryGetValue(key, out var poolableObjectGroup))
             {
@@ -142,7 +127,7 @@ namespace UnityBase.Manager
             poolableObjectGroup.Remove(poolable);
         }
 
-        public void RemovePool<T>(bool readLogs = false) where T : Component, IPoolable
+        public void RemovePool<T>(bool readLogs = false) where T : IPoolable
         {
             if(_isDisposed) return;
             
@@ -161,7 +146,7 @@ namespace UnityBase.Manager
             _cachedPools.Remove(key);
         }
 
-        public int GetClonesCount<T>(bool readLogs = false) where T : Component, IPoolable
+        public int GetClonesCount<T>(bool readLogs = false) where T : IPoolable
         {
             var key = typeof(T);
 
@@ -222,7 +207,7 @@ namespace UnityBase.Manager
         private void CreateAllCashedPrefabs() => _cachedPools.Where(poolData=> !poolData.Value.IsLazy)
                                                              .ForEach(x => x.Value.CreatePool());
 
-        private PoolableObjectGroup Create<T>() where T : Component, IPoolable
+        private PoolableObjectGroup Create<T>() where T : IPoolable
         {
             var type = typeof(T);
             var poolData = _poolManagerSo.poolDataSo;

@@ -56,6 +56,12 @@ namespace UnityBase.ManagerSO
             LevelSOGridDataHelper.SaveToJsonFile(this);
         }
         
+        public void ResetUpdatedLevelData()
+        {
+            if (hasUpdateableData)
+                IsInitialized = false;
+        }
+        
 #if UNITY_EDITOR
         [Button]
         public void ResetToSavedFile() => LevelSOGridDataHelper.ResetGridToSavedFile(this);

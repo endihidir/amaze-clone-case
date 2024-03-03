@@ -13,7 +13,7 @@ public class LevelUI : MonoBehaviour
     [Inject] 
     private readonly ILevelDataService _levelDataService;
 
-    private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
+    private EventBinding<GameStateData> _gameStateBinding = new();
 
     private void Awake()
     {

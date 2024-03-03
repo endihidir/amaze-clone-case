@@ -34,7 +34,11 @@ namespace UnityBase.EventBus
             set => _onEventNoArgs = value;
         }
 
-        public EventBinding(Priority priority = Priority.Normal) => _priority = priority;
+        public EventBinding(Priority priority = Priority.Normal)
+        {
+            _priority = priority;
+        }
+
         public EventBinding(Action<T> onEvent, Priority priority = Priority.Normal)
         {
             _onEvent = onEvent;
@@ -47,10 +51,36 @@ namespace UnityBase.EventBus
             _priority = priority;
         }
 
-        public void Add(Action<T> onEvent) => _onEvent += onEvent;
-        public void Add(Action onEventNoArgs) => _onEventNoArgs += onEventNoArgs;
-        public void Remove(Action<T> onEvent) => _onEvent -= onEvent;
-        public void Remove(Action onEventNoArgs) => _onEventNoArgs -= onEventNoArgs;
+        public EventBinding<T> Add(Action<T> onEvent)
+        {
+             _onEvent += onEvent;
+             return this;
+        }
+
+        public EventBinding<T> Add(Action onEventNoArgs)
+        {
+            _onEventNoArgs += onEventNoArgs;
+            return this;
+        }
+
+        public EventBinding<T> Remove(Action<T> onEvent)
+        {
+            _onEvent -= onEvent;
+            return this;
+        }
+
+        public EventBinding<T> Remove(Action onEventNoArgs)
+        {
+            _onEventNoArgs -= onEventNoArgs;
+            return this;
+        }
+
+        public EventBinding<T> SetPriority(Priority priority)
+        {
+            _priority = priority;
+            return this;
+        }
+        
         public void ClearBindingData()
         {
             _onEvent = null;
