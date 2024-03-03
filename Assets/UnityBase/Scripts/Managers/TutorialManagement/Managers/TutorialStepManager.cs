@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Sirenix.Serialization;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
@@ -58,7 +57,6 @@ namespace UnityBase.Manager
             _tutorialMaskDataService = tutorialMaskDataService;
             
             _jsonDataService = jsonDataService;
-            _jsonDataService.DataFormat = DataFormat.JSON;
         }
 
         ~TutorialStepManager() => Dispose();

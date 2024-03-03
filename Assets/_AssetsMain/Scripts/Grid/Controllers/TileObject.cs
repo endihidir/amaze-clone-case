@@ -6,7 +6,7 @@ public class TileObject : TileBase, IVisitable, IResettable
 {
     [SerializeField] private MeshRenderer _timeMeshRenderer;
 
-    [SerializeField] private Material _defaultMaterial;
+    [SerializeField] private Material _defaultMaterial, _borderMaterial;
 
     [ReadOnly] [SerializeField] private bool _isPainted;
     public bool IsPainted => _isPainted;
@@ -16,8 +16,11 @@ public class TileObject : TileBase, IVisitable, IResettable
         if(_isPainted) return;
 
         _isPainted = true;
-        
-        _timeMeshRenderer.material = material;
+
+        var materials = _timeMeshRenderer.materials;
+        materials[0] = _borderMaterial;
+        materials[1] = material;
+        _timeMeshRenderer.materials = materials;
     }
     public void Accept(IVisitor visitor)
     {
@@ -27,8 +30,15 @@ public class TileObject : TileBase, IVisitable, IResettable
     public void Reset()
     {
         _isPainted = false;
+
+        var materials = _timeMeshRenderer.materials;
         
-        _timeMeshRenderer.material = _defaultMaterial;
+        for (var i = 0; i < _timeMeshRenderer.materials.Length; i++)
+        {
+            materials[i] = _defaultMaterial;
+        }
+        
+        _timeMeshRenderer.materials = materials;
     }
 
 }

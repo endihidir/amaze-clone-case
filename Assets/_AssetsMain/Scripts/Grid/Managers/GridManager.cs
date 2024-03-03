@@ -1,5 +1,4 @@
 using System;
-using Sirenix.Serialization;
 using Unity.Mathematics;
 using UnityBase.EventBus;
 using UnityBase.Manager;
@@ -12,7 +11,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 {
     private readonly IPoolDataService _poolDataService;
     private readonly ILevelDataService _levelDataService;
-    private readonly IGridNodeSerializer _gridNodeSerializer;
+    private readonly ITileSerializer _tileSerializer;
     private readonly IJsonDataService _jsonDataService;
     private readonly IGameplayDataService _gameplayDataService;
 
@@ -36,15 +35,14 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     private Tag_GameArena _gameArena;
 
-    public GridManager(ILevelDataService levelDataService, IGridNodeSerializer gridNodeSerializer, IJsonDataService jsonDataService, 
+    public GridManager(ILevelDataService levelDataService, ITileSerializer tileSerializer, IJsonDataService jsonDataService, 
         IPoolDataService poolDataService, IGameplayDataService gameplayDataService)
     {
         _levelDataService = levelDataService;
-        _gridNodeSerializer = gridNodeSerializer;
+        _tileSerializer = tileSerializer;
         _jsonDataService = jsonDataService;
         _poolDataService = poolDataService;
         _gameplayDataService = gameplayDataService;
-        _jsonDataService.DataFormat = DataFormat.JSON;
         _gameArena = UnityEngine.Object.FindObjectOfType<Tag_GameArena>();
     }
 
@@ -63,9 +61,6 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     
     public void Dispose()
     {
-        if(_levelData.hasUpdatableData)
-            _jsonDataService.Save(_levelKey, _serializedGridData);
-        
         _gameStateBinder.Remove(OnStartGameStateTransition);
         EventBus<GameStateData>.RemoveListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
         
@@ -85,6 +80,9 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         }
         else if (isPassedToNextLevel)
         {
+            if(_levelData.hasUpdateableData) 
+                _levelData.IsInitialized = false;
+            
             HideCurrentLevel();
             UpdateGridData();
             GenerateGrid(true);
@@ -93,9 +91,6 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
 
     private void HideCurrentLevel()
     {
-        if(_levelData.hasUpdatableData)
-            _jsonDataService.Save(_levelKey, _serializedGridData);
-        
         var endXPos = _gridData.Width * (NodeSize + Padding.x) * -5;
         _currentLevelObject.SetEndPos(endXPos);
         _poolDataService.HideObject(_currentLevelObject, 0.75f, 0f);
@@ -104,7 +99,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     private void UpdateGridData()
     {
         _levelData = _levelDataService.GetCurrentLevelData();
-        _levelData.Initialize();
+        _levelData.SaveToJson();
         _levelKey = _levelData.Key;
         _serializedGridData = _jsonDataService.Load<int[,]>(_levelKey);
         Width = _serializedGridData.GetLength(0);
@@ -126,7 +121,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         {
             for (int z = 0; z < Height; z++)
             {
-                TileBase tileBase = _gridNodeSerializer.Deserialize<TileBase>(_serializedGridData[x, z]);
+                TileBase tileBase = _tileSerializer.Deserialize<TileBase>(_serializedGridData[x, z]);
                 tileBase.index = _gridData.CalculateIndex(x, z);
                 var tileTransform = tileBase.transform;
                 tileTransform.SetParent(_currentLevelObject.GridsParent.transform);
@@ -155,10 +150,12 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
                 
                 if (coinTile == coinTileObject)
                 {
-                    _serializedGridData[x, z] = _gridNodeSerializer.SerializeOnCoinCollect(coinTileObject);
+                    _serializedGridData[x, z] = _tileSerializer.SerializeOnCoinCollect(coinTileObject);
                 }
             }
         }
+        
+        _jsonDataService.Save(_levelKey, _serializedGridData);
     }
 
     private void ArrangeTile(TileBase tileBase)

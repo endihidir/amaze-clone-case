@@ -256,7 +256,6 @@ MonoBehaviour:
       Entry: 8
       Data: 
   index: 4
-  isInitialized: 0
-  hasUpdatableData: 1
+  hasUpdateableData: 1
   width: 9
   height: 8

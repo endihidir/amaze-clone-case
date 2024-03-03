@@ -1,6 +1,6 @@
 using System;
 
-public interface IGridNodeSerializer
+public interface ITileSerializer
 {
     public int Serialize(TileBase tileBase);
     public int SerializeOnCoinCollect(TileBase tileBase);

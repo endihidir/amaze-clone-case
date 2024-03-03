@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using Sirenix.Serialization;
 using UnityBase.Service;
 
 #if UNITY_EDITOR
@@ -11,7 +10,7 @@ using UnityEditor;
 #endif
 
 using UnityEngine;
-using SerializationUtility = Sirenix.Serialization.SerializationUtility;
+
 
 namespace UnityBase.Manager
 {
@@ -24,7 +23,7 @@ namespace UnityBase.Manager
 #else
         private static string DirectoryPath => $"{Application.persistentDataPath}/{DirectoryName}";
 #endif
-        public DataFormat DataFormat { get; set; }
+        
         public void Initialize() { }
         public void Start() { }
         

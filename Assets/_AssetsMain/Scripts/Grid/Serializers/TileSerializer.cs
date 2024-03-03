@@ -1,10 +1,13 @@
 using System;
 using UnityBase.Service;
 
-public class GridNodeSerializer : IGridNodeSerializer
+public class TileSerializer : ITileSerializer
 {
     private readonly IPoolDataService _poolDataService;
-    public GridNodeSerializer(IPoolDataService poolDataService) => _poolDataService = poolDataService;
+    public TileSerializer(IPoolDataService poolDataService)
+    {
+        _poolDataService = poolDataService;
+    }
 
     public int Serialize(TileBase tileBase) => tileBase switch
     {
@@ -25,13 +28,12 @@ public class GridNodeSerializer : IGridNodeSerializer
 
     public T Deserialize<T>(int val) where T : TileBase => val switch
     {
-        0 => _poolDataService.GetObject<TileObject>(0f,0f,default) as T,
-        1 => _poolDataService.GetObject<BlockTileObject>(0f,0f, default) as T,
-        2 => _poolDataService.GetObject<PlayerTileObject>(0f,0f, default) as T,
+        0 => _poolDataService.GetObject<TileObject>(0f,0f) as T,
+        1 => _poolDataService.GetObject<BlockTileObject>(0f,0f) as T,
+        2 => _poolDataService.GetObject<PlayerTileObject>(0f,0f) as T,
         3 => _poolDataService.GetObject<CoinTileObject>(0f, 0f) as T,
         _ => null
     };
-    
     
     public Type Deserialize(int val) => val switch
     {

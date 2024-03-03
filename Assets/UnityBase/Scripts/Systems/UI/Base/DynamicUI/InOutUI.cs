@@ -25,6 +25,15 @@ namespace UnityBase.UI.Dynamic
 
         private Tween _moveTween, _bounceTween;
 
+        private Vector3 _uiHandlerDefaultScale;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            
+            _uiHandlerDefaultScale = _uiHandler.localScale;
+        }
+
         [Button]
         public override void OpenUI()
         {
@@ -64,7 +73,7 @@ namespace UnityBase.UI.Dynamic
 
             _bounceTween = _uiHandler.DOScale(bounceScale, _bounceDuration).SetEase(_bounceEase)
                 .SetLoops(2, LoopType.Yoyo)
-                .OnComplete(() => _uiHandler.localScale = Vector3.one).SetDelay(delay);
+                .OnComplete(() => _uiHandler.localScale = _uiHandlerDefaultScale).SetDelay(delay);
         }
 
         public override void OpenUIDirectly()
