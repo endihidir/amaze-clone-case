@@ -33,4 +33,6 @@ public class MovementController : MonoBehaviour, IMoveEntity
         
         _commandRecorder.Execute(_moveCommand, onComplete);
     }
+
+    public void Dispose() => _commandRecorder.Dispose();
 }

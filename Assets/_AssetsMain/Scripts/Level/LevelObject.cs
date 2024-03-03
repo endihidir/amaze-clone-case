@@ -52,13 +52,13 @@ public class LevelObject : MonoBehaviour, IPoolable
     }
     private void OnHideComplete(Action onComplete)
     {
+        onComplete?.Invoke();
+        
         var allTileResettables = GetComponentsInChildren<IResettable>();
         allTileResettables.ForEach(x => x.Reset());
         
         var allPoolables = GetComponentsInChildren<IPoolable>();
         allPoolables.ForEach(x => _poolDataService.HideObject(x, 0f,0f));
-        
-        onComplete?.Invoke();
         
         gameObject.SetActive(false);
     }

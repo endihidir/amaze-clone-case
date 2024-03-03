@@ -68,7 +68,7 @@ public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IRe
                     
                     _movementController.MoveBall(lastTile.transform.position, () => _isMovementInProgress = false);
                     
-                    _tileVisitor.VisitTilePath(tilePath, OnVisitComplete);
+                    _tileVisitor.VisitTilePath(tilePath, direction, OnVisitComplete);
                 }
             }
         }
@@ -81,6 +81,8 @@ public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IRe
         if (isAllTilesPainted)
         {
             EnableInput(false);
+            
+            _movementController.Dispose();
             
             GridManager.OnAllTilesPainted?.Invoke();
         }

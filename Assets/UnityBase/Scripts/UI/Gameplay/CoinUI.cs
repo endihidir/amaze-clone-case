@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityBase.Manager;
 using UnityBase.Service;
@@ -19,5 +20,16 @@ public class CoinUI : MonoBehaviour
 
     private void OnCoinDataUpdate(int coinVal) => UpdateView(coinVal);
 
-    private void UpdateView(int val) => _coinTxt.text = val.ToString("0");
+    private void UpdateView(int val)
+    {
+        _coinTxt.text = val.ToString("0");
+        
+        _coinTxt.transform.DOKill(true);
+        _coinTxt.transform.DOScale(1.5f, 0.2f).SetEase(Ease.OutBack).OnComplete(()=> _coinTxt.transform.localScale = Vector3.one);
+    }
+
+    private void OnDestroy()
+    {
+        _coinTxt.transform.DOKill();
+    }
 }

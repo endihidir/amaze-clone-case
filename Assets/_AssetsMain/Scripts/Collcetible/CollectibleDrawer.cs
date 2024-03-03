@@ -3,10 +3,15 @@ using System.Linq;
 using UnityBase.EventBus;
 using UnityBase.Manager;
 using UnityBase.Manager.Data;
+using UnityBase.Service;
 using UnityEngine;
+using VContainer;
 
 public class CollectibleDrawer : MonoBehaviour
 {
+    [Inject] 
+    private readonly ILevelDataService _levelDataService;
+    
     [SerializeField] private Mesh _collectibleMesh;
     
     [SerializeField] private Material _collectibleMaterial;
@@ -35,6 +40,8 @@ public class CollectibleDrawer : MonoBehaviour
     }
     private void OnGameStateTransition(GameStateData gameStateData)
     {
+        if(!_levelDataService.GetCurrentLevelData().hasUpdateableData) return;
+        
         var isGameStarted = gameStateData.StartState == GameState.GameLoadingState && gameStateData.EndState == GameState.GamePlayState;
         
         var passedToNextLevel = gameStateData.StartState == GameState.GameSuccessState && gameStateData.EndState == GameState.GamePlayState;

@@ -20,7 +20,7 @@ public class TileVisitor : IVisitor
         _pathProvider = pathProvider;
     }
     
-    public async void VisitTilePath(IList<TileObject> tilePath, Action onComplete)
+    public async void VisitTilePath(IList<TileObject> tilePath, Direction direction, Action onComplete)
     {
         CancellationTokenExtentions.Refresh(ref _cancellationTokenSource);
 
@@ -35,6 +35,8 @@ public class TileVisitor : IVisitor
                 await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
             
                 tileObject.SetMaterial(_materialProvider.CurrentStampMaterial);
+                
+                tileObject.PlayTileAnim(direction);
                 
                 Visit(tileObject);
             }

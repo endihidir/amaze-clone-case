@@ -33,7 +33,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     public float3 Padding { get; set; }
     public float3 OriginPos { get; set; }
     public Grid<TileBase> Grid => _gridData;
-    
+
     public GridManager(ILevelDataService levelDataService, ITileSerializer tileSerializer, IJsonDataService jsonDataService, IPoolDataService poolDataService, IGameplayDataService gameplayDataService)
     {
         _levelDataService = levelDataService;

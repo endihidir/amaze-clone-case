@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 0
   icon: {fileID: 2800000, guid: 84b53c86c08376b42a475592469d0622, type: 3}
+  _meshHandler: {fileID: 4788362541798644122}
   _timeMeshRenderer: {fileID: 5720696434615586202}
   _defaultMaterial: {fileID: 2100000, guid: a0a91ec5a5a5ec742b0f775e93d3f27d, type: 2}
   _borderMaterial: {fileID: 2100000, guid: 481ec77a0b3f4fe4c96e7f0307b6cb9c, type: 2}

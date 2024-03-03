@@ -1,9 +1,15 @@
-﻿using DG.Tweening;
-using UnityBase.Manager;
+﻿using System;
+using DG.Tweening;
+using UnityBase.Service;
 using UnityEngine;
+using VContainer;
+using Random = UnityEngine.Random;
 
 public class CoinTileObject : TileObject, ICollectibleDrawer
 {
+    [Inject] 
+    private readonly ICurrencyDataService _currencyDataService;
+    
     [SerializeField] private GameObject _coinObject;
     
     private bool _isCollected;
@@ -11,19 +17,21 @@ public class CoinTileObject : TileObject, ICollectibleDrawer
     private float _defaultZPos;
     
     private Tween _bounceTween;
-    public bool IsCollected => _isCollected;
+    public bool IsCollected => _isCollected || !isActiveAndEnabled;
     public Transform Transform => _coinObject.transform;
-    
-    private void Awake()
+
+    public override void Show(float duration, float delay, Action onComplete)
     {
-        var delay = Random.Range(0f, 0.5f);
+        base.Show(duration, delay, onComplete);
+        
+        var startDelay = Random.Range(0f, 0.5f);
 
         _defaultZPos = _coinObject.transform.localPosition.z;
 
         _bounceTween = DOTween.Sequence()
-                              .AppendInterval(0.5f)
-                              .Append(_coinObject.transform.DOLocalMoveZ(_defaultZPos + 0.1f, 0.2f).SetEase(Ease.OutCubic).SetDelay(delay))
-                              .SetLoops(-1, LoopType.Yoyo);
+                                .AppendInterval(0.5f)
+                                .Append(_coinObject.transform.DOLocalMoveZ(_defaultZPos + 0.1f, 0.2f).SetEase(Ease.OutCubic).SetDelay(startDelay))
+                                .SetLoops(-1, LoopType.Yoyo);
     }
 
     public void CollectCoin()
@@ -34,9 +42,18 @@ public class CoinTileObject : TileObject, ICollectibleDrawer
         
         _coinObject.SetActive(false);
         
-        _bounceTween.Kill();
+        _bounceTween?.Kill();
         
-        CurrencyManager.OnCoinCollect?.Invoke(_coinObject.transform.position, 1);
+        _currencyDataService.IncreaseCoin(1);
+        
+        //CurrencyManager.OnCoinCollect?.Invoke(_coinObject.transform.position, 1);
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+
+        _isCollected = false;
     }
 
     protected override void OnDestroy()

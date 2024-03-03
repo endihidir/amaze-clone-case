@@ -6,12 +6,19 @@ namespace UnityBase.Command
     public class CommandRecorder : ICommandRecorder
     {
         private ICommand _activeCommand;
-        private Stack<ICommand> _undoStack = new Stack<ICommand>();
-        private Stack<ICommand> _redoStack = new Stack<ICommand>();
+        private Stack<ICommand> _undoStack;
+        private Stack<ICommand> _redoStack;
 
-        private Queue<ICommand> _savedCommandQueue = new Queue<ICommand>();
+        private Queue<ICommand> _savedCommandQueue;
         private int _savedCommandCounter;
         private bool _isSavedExecutionStarted;
+
+        public CommandRecorder()
+        {
+            _undoStack = new Stack<ICommand>();
+            _redoStack = new Stack<ICommand>();
+            _savedCommandQueue = new Queue<ICommand>();
+        }
 
         public void Execute(ICommand command, Action onComplete)
         {
@@ -113,9 +120,9 @@ namespace UnityBase.Command
         
         public void Dispose()
         {
-            _undoStack = null;
-            _redoStack = null;
-            _savedCommandQueue = null;
+            _undoStack.Clear();
+            _redoStack.Clear();
+            _savedCommandQueue.Clear();
             _activeCommand = null;
         }
     }

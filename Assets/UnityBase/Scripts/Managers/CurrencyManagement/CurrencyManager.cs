@@ -13,8 +13,6 @@ namespace UnityBase.Manager
 
         public static Action<int> OnCoinDataUpdate;
 
-        public static Action<Vector3, int> OnCoinCollect;
-
         private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
 
         #region VARIABLES

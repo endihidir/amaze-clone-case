@@ -567,7 +567,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2124336176785023109}
   - component: {fileID: 2893509988375123525}
-  - component: {fileID: 407298002971766000}
   m_Layer: 5
   m_Name: CoinUI
   m_TagString: Untagged
@@ -608,19 +607,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _coinTxt: {fileID: 910128174585775810}
---- !u!114 &407298002971766000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8141936430579877549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88cd9173ced06634da1582b98fdee21b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _coinIcon: {fileID: 7204659067045241095}
 --- !u!1 &9090744410395796823
 GameObject:
   m_ObjectHideFlags: 0

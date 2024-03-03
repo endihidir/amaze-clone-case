@@ -156,8 +156,8 @@ namespace UnityBase.Manager
                     LastUnlockedChapterIndex = _chapterData.Length - 1;
 
                     var levelDataLenght = GetLastUnlockedChapterData().levelData.Length - 1;
-                    
-                    LastUnlockedLevelIndex = Random.Range(0, levelDataLenght);
+
+                    LastUnlockedLevelIndex = 0;
                 }
             }
             
