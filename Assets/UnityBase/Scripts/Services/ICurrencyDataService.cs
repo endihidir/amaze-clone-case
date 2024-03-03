@@ -2,9 +2,8 @@
 {
     public interface ICurrencyDataService
     {
-        public float SavedCoinAmount { get; }
-
-        public void IncreaseCoin(float value);
-        public void DecreaseCoin(float value);
+        public int SavedCoinAmount { get; }
+        public void IncreaseCoin(int value);
+        public void DecreaseCoin(int value);
     }
 }

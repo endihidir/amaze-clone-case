@@ -4,7 +4,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityBase.Extensions;
 using UnityBase.Visitor;
-using UnityEngine;
 
 public class TileVisitor : IVisitor
 {
@@ -27,7 +26,7 @@ public class TileVisitor : IVisitor
 
         var gridData = _pathProvider.GetGridData;
         
-        var delay = (1f / _movementController.Speed) / ((gridData.NodeSize + gridData.Padding.x) * 2f);
+        var delay = (1f / _movementController.Speed) / ((gridData.NodeSize + gridData.Padding.x) * 1.5f);
         
         try
         {

@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using UnityBase.Manager;
 using UnityEngine;
 
 public class CoinTileObject : TileObject, ICollectibleDrawer
@@ -34,6 +35,8 @@ public class CoinTileObject : TileObject, ICollectibleDrawer
         _coinObject.SetActive(false);
         
         _bounceTween.Kill();
+        
+        CurrencyManager.OnCoinCollect?.Invoke(_coinObject.transform.position, 1);
     }
 
     protected override void OnDestroy()

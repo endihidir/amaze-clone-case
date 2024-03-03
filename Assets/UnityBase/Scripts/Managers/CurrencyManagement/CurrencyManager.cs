@@ -11,24 +11,23 @@ namespace UnityBase.Manager
     {
         private const string COIN_AMOUNT_KEY = "CoinAmountKey";
 
-        public static event Action<float> OnCoinUpdate;
+        public static Action<int> OnCoinDataUpdate;
+
+        public static Action<Vector3, int> OnCoinCollect;
 
         private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
 
         #region VARIABLES
 
-        private float _startCoinAmount;
+        private int _startCoinAmount;
+        
         private bool _isCoinSaveAvailable;
-
-        private float _currentManaAmount;
-        private float _coinAmountHolder;
-        private float _unsavedCoinAmount;
 
         #endregion
 
         #region PROPERTIES
 
-        public float SavedCoinAmount
+        public int SavedCoinAmount
         {
             get => GetCoin();
             private set => SetCoin(value);
@@ -41,76 +40,31 @@ namespace UnityBase.Manager
             var currencyManagerData = managerDataHolderSo.currencyManagerSo;
 
             _startCoinAmount = currencyManagerData.startCoinAmount;
-            _isCoinSaveAvailable = currencyManagerData.isCoinSaveAvailable;
-
-            _unsavedCoinAmount = _startCoinAmount;
-            _coinAmountHolder = SavedCoinAmount;
         }
 
-        ~CurrencyManager()
+        ~CurrencyManager() { }
+
+        public void Initialize() { }
+
+        public void Start() { }
+
+        public void Dispose() { }
+
+        private int GetCoin() => PlayerPrefs.GetInt(COIN_AMOUNT_KEY, _startCoinAmount);
+        private void SetCoin(int value) => PlayerPrefs.SetInt(COIN_AMOUNT_KEY, value);
+
+        public void IncreaseCoin(int value)
         {
-            Dispose();
+            SavedCoinAmount += value;
+
+            OnCoinDataUpdate?.Invoke(SavedCoinAmount);
         }
 
-        public void Initialize()
+        public void DecreaseCoin(int value)
         {
+            SavedCoinAmount -= value;
 
-        }
-
-        public void Start()
-        {
-            _gameStateBinding.Add(OnCompleteGameStateTransition);
-
-            EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.End));
-        }
-
-        public void Dispose()
-        {
-            _gameStateBinding.Remove(OnCompleteGameStateTransition);
-            
-            EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.End));
-        }
-
-        private void OnCompleteGameStateTransition(GameStateData gameStateData)
-        {
-            if (gameStateData.EndState is GameState.GameLoadingState or GameState.GameFailState)
-            {
-                SaveCoinAmount();
-            }
-        }
-
-        private float GetCoin()
-        {
-            var prefsVal = PlayerPrefs.GetFloat(COIN_AMOUNT_KEY, _startCoinAmount);
-            var val = _isCoinSaveAvailable ? prefsVal : _unsavedCoinAmount;
-            return val;
-        }
-
-        private void SetCoin(float value)
-        {
-            if (_isCoinSaveAvailable)
-                PlayerPrefs.SetFloat(COIN_AMOUNT_KEY, value);
-            else
-                _unsavedCoinAmount = value;
-        }
-
-        public void IncreaseCoin(float value)
-        {
-            _coinAmountHolder += value;
-
-            OnCoinUpdate?.Invoke(_coinAmountHolder);
-        }
-
-        public void DecreaseCoin(float value)
-        {
-            _coinAmountHolder -= value;
-
-            OnCoinUpdate?.Invoke(_coinAmountHolder);
-        }
-
-        private void SaveCoinAmount()
-        {
-            SavedCoinAmount = _coinAmountHolder;
+            OnCoinDataUpdate?.Invoke(SavedCoinAmount);
         }
     }
 }
