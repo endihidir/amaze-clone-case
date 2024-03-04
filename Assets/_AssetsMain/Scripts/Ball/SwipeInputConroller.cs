@@ -1,11 +1,9 @@
 ﻿using UnityBase.Service;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataService
 {
-    private bool _detectSwipeOnlyAfterRelease = false;
     private float _minDistanceForSwipe = Screen.width * 0.1f;
     
     private Vector2 _fingerDownPosition, _fingerUpPosition;
@@ -79,7 +77,7 @@ public class SwipeInputConroller : ISwipeInputService, IGameplayPresenterDataSer
         _isDragging = false;
     }
     
-    public Vector3 CastDirectionToVector(Direction direction) => direction switch
+    public Vector3 SerializeDirection(Direction direction) => direction switch
     {
         Direction.Down => Vector3.back,
         Direction.Up => Vector3.forward,

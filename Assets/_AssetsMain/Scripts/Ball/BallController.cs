@@ -16,8 +16,7 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
     [SerializeField] private PathProvider _pathProvider;
     [SerializeField] private MovementController _movementController;
     [SerializeField] private MaterialProvider _materialProvider;
-    [SerializeField] private GameObject _trailObject;
-    
+    [SerializeField] private GameObject _trailObject, _blastParticle;
     
     private TileVisitor _tileVisitor;
     private PaintCompleteChecker _paintCompleteChecker = new PaintCompleteChecker();
@@ -67,12 +66,21 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
                 {
                     _isMovementInProgress = true;
                     
-                    _movementController.MoveBall(lastTile.transform.position, () => _isMovementInProgress = false);
+                    _blastParticle.SetActive(false);
+
+                    _movementController.MoveBall(lastTile.transform.position, OnMovementComplete);
                     
                     _tileVisitor.VisitTilePath(tilePath, direction, OnVisitComplete);
                 }
             }
         }
+    }
+
+    private void OnMovementComplete()
+    {
+        _isMovementInProgress = false;
+        
+        _blastParticle.SetActive(true);
     }
 
     private void OnVisitComplete()
@@ -95,7 +103,12 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
         _trailObject.SetActive(enable);
     }
     
-    public void Reset() => ActivateInitials(false);
+    public void Reset()
+    {
+        ActivateInitials(false);
+        
+        _blastParticle.SetActive(false);
+    }
 
     private void OnDestroy()
     {
