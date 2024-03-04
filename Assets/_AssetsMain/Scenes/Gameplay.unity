@@ -123,6 +123,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &432685435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 432685436}
+  - component: {fileID: 432685437}
+  m_Layer: 0
+  m_Name: CoinDrawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &432685436
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432685435}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 752199578}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &432685437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432685435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dd90019e6f25a4a82c4d19a0a4db1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collectibleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  _collectibleMaterial: {fileID: 2100000, guid: bbaa051f67f795b489f65aa62a58256c,
+    type: 2}
 --- !u!1 &600059991
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,9 +274,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752199578}
-  - component: {fileID: 752199579}
+  - component: {fileID: 752199580}
   m_Layer: 0
-  m_Name: CollectibleDrawer
+  m_Name: CoinDrawerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -247,10 +294,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 432685436}
   m_Father: {fileID: 1777901049}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &752199579
+--- !u!114 &752199580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -259,12 +307,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 752199577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6dd90019e6f25a4a82c4d19a0a4db1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ea50c6e7b81b0b448378d6352c09234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _collectibleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  _collectibleMaterial: {fileID: 2100000, guid: bbaa051f67f795b489f65aa62a58256c,
-    type: 2}
+  _coinDrawer: {fileID: 432685437}
 --- !u!1 &758461027
 GameObject:
   m_ObjectHideFlags: 0

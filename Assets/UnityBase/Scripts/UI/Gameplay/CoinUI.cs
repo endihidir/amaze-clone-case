@@ -34,8 +34,5 @@ public class CoinUI : MonoBehaviour, ICoinView
                                                .OnComplete(()=> _coinIconT.transform.localScale = Vector3.one);
     }
 
-    private void OnDestroy()
-    {
-        _iconScaleUpAnim?.Kill();
-    }
+    private void OnDestroy() => _iconScaleUpAnim?.Kill();
 }

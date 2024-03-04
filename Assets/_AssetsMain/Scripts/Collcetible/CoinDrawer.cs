@@ -1,17 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityBase.EventBus;
-using UnityBase.Manager;
 using UnityBase.Manager.Data;
-using UnityBase.Service;
 using UnityEngine;
-using VContainer;
 
 public class CoinDrawer : MonoBehaviour
 {
-    [Inject] 
-    private readonly ILevelDataService _levelDataService;
-    
     [SerializeField] private Mesh _collectibleMesh;
     
     [SerializeField] private Material _collectibleMaterial;
@@ -26,37 +20,7 @@ public class CoinDrawer : MonoBehaviour
 
     private bool _isInitialized;
 
-    private void OnEnable()
-    {
-        _gameStateBinding.Add(OnGameStateTransition);
-        EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Start));
-    }
-    
-    private void OnDisable()
-    {
-        _gameStateBinding.Remove(OnGameStateTransition);
-        EventBus<GameStateData>.RemoveListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Start));
-        
-    }
-    private void OnGameStateTransition(GameStateData gameStateData)
-    {
-        if (!_levelDataService.GetCurrentLevelData().hasUpdateableData)
-        {
-            _isInitialized = false;
-            return;
-        }
-        
-        var isGameStarted = gameStateData.StartState == GameState.GameLoadingState && gameStateData.EndState == GameState.GamePlayState;
-        
-        var passedToNextLevel = gameStateData.StartState == GameState.GameSuccessState && gameStateData.EndState == GameState.GamePlayState;
-        
-        if (isGameStarted || passedToNextLevel)
-        {
-            Initialize();
-        }
-    }
-
-    private void Initialize()
+    public void Initialize()
     {
         _collectibles = FindObjectsOfType<MonoBehaviour>().OfType<ICoinDrawer>().ToList();
 
@@ -68,6 +32,8 @@ public class CoinDrawer : MonoBehaviour
         }
 
         _isInitialized = _collectibles.Count > 1;
+        
+        enabled = _isInitialized;
     }
 
     private void Update()
@@ -88,5 +54,11 @@ public class CoinDrawer : MonoBehaviour
         }
         
         Graphics.DrawMeshInstanced(_collectibleMesh, 0, _collectibleMaterial, _matrices);
+    }
+
+    public void Disable()
+    {
+        _isInitialized = false;
+        enabled = false;
     }
 }
