@@ -16,7 +16,7 @@ namespace UnityBase.Manager
 {
     public class JsonDataManager : IJsonDataService, IAppPresenterDataService
     {
-        private const string DirectoryName = "SaveData";
+        private const string DirectoryName = "JsonData";
 
 #if UNITY_EDITOR
         private static string DirectoryPath => $"{Application.dataPath}/{DirectoryName}";
