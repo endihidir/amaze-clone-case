@@ -66,7 +66,7 @@ namespace UnityBase.Manager
         {
             if (IsStateNotChangeable(gameState)) return;
 
-            //Debug.Log($"Changing state from {_startState} to {gameState}");
+            Debug.Log($"Changing state from {_startState} to {gameState}");
 
             _isTransitionStarted = true;
 

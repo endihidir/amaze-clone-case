@@ -27,6 +27,10 @@ namespace UnityBase.Manager
             
             Application.targetFrameRate = gameManagerData.targetFrameRate;
             Input.multiTouchEnabled = gameManagerData.isMultiTouchEnabled;
+            
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
+            Debug.unityLogger.logEnabled = false;
+#endif
         }
 
         ~GameManager() => Dispose();
