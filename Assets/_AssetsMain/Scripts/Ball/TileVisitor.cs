@@ -13,7 +13,7 @@ public class TileVisitor : IVisitor
     
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    private float _delayCounter;
+    private float _coinMovementStartDelay;
 
     public TileVisitor(MovementController movementController, MaterialProvider materialProvider, PathProvider pathProvider)
     {
@@ -43,7 +43,7 @@ public class TileVisitor : IVisitor
                 Visit(tileObject);
             }
 
-            _delayCounter = 0f;
+            _coinMovementStartDelay = 0f;
             
             onComplete?.Invoke();
         }
@@ -57,13 +57,11 @@ public class TileVisitor : IVisitor
     {
         if (visitable is CoinTileObject coinTileObject)
         {
-            coinTileObject.StartDelay = _delayCounter;
+            coinTileObject.CollectCoin(_coinMovementStartDelay);
             
-            coinTileObject.CollectCoin();
+            _coinMovementStartDelay += 0.05f;
             
             GridManager.OnCollectCoinTile?.Invoke(coinTileObject);
-
-            _delayCounter += 0.05f;
         }
     }
 

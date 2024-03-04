@@ -120,6 +120,8 @@ namespace UnityBase.Pool
             if(!_poolParent) CreatePoolParent();
             
             poolable.PoolableObject.transform.SetParent(_poolParent.transform);
+            
+            poolable.PoolableObject.transform.localPosition = Vector3.zero;
         }
         
         private void CreatePoolParent()

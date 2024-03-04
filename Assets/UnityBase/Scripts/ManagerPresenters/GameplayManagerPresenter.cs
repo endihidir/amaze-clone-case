@@ -10,17 +10,23 @@ namespace UnityBase.Presenter
 {
     public class GameplayManagerPresenter : IInitializable, IPostInitializable, IDisposable
     {
+        [Inject]
         private readonly IEnumerable<IGameplayPresenterDataService> _gameplayPresenterDataServices;
         
-        public GameplayManagerPresenter(IObjectResolver objectResolver, IEnumerable<IGameplayPresenterDataService> gameplayPresenterDataServices)
+        public GameplayManagerPresenter(IObjectResolver objectResolver, ICoinView coinView)
+        {
+            UpdateGameplayServices(objectResolver, coinView);
+        }
+
+        private static void UpdateGameplayServices(IObjectResolver objectResolver, ICoinView coinView)
         {
             var poolManager = objectResolver.Resolve<IPoolDataService>() as PoolManager;
-            
             poolManager?.UpdateAllResolvers(objectResolver);
 
-            _gameplayPresenterDataServices = gameplayPresenterDataServices;
+            var currencyManager = objectResolver.Resolve<ICurrencyViewService>() as CurrencyManager;
+            currencyManager?.UpdateCoinView(coinView);
         }
-        
+
         public void Initialize() => _gameplayPresenterDataServices.ForEach(x => x.Initialize());
         public void PostInitialize() => _gameplayPresenterDataServices.ForEach(x => x.Start());
         public void Dispose() => _gameplayPresenterDataServices.ForEach(x => x.Dispose());

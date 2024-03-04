@@ -7,40 +7,42 @@ public class CoinTileObject : TileObject, ICoinDrawer
 {
     [Inject] 
     private readonly ICurrencyDataService _currencyDataService;
-    
+
+    [Inject] 
+    private readonly ICurrencyViewService _currencyViewService;
+
+    [SerializeField] private int _coinValue = 1;
+
     [SerializeField] private CoinAnimationHandler _coinAnimationHandler;
     
     private bool _isCollected;
-    
-    private CoinUI _coinUI;
 
     public bool IsCoinDisabled => !_coinAnimationHandler.IsActive;
     public Transform Transform => _coinAnimationHandler.transform;
-    public float StartDelay { get; set; }
 
     public override void Show(float duration, float delay, Action onComplete)
     {
         base.Show(duration, delay, onComplete);
 
-        _coinUI ??= FindObjectOfType<CoinUI>();
-        
         _coinAnimationHandler.StartIdleAnim();
     }
 
-    public void CollectCoin()
+    public void CollectCoin(float movementStartDelay)
     {
         if(_isCollected) return;
 
         _isCollected = true;
         
-        _coinAnimationHandler.StartMoveAnim(_coinUI.CoinIconT.position, StartDelay, OnCoinCollectComplete);
+        _currencyDataService.IncreaseCoinData(_coinValue);
+        
+        _coinAnimationHandler.StartMoveAnim(_currencyViewService.CoinIconTransform.position, movementStartDelay, OnCoinCollectComplete);
     }
 
     private void OnCoinCollectComplete()
     {
-        _coinUI.PlayCoinIconAnim();
+        _currencyViewService.UpdateCoinView(_coinValue);
         
-        _currencyDataService.IncreaseCoin(1);
+        _currencyViewService.PlayViewAnimation();
     }
     
     public override void Reset()

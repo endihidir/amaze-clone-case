@@ -10,6 +10,8 @@ namespace UnityBase.BaseLifetimeScope
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<GameplayManagerPresenter>();
+
+            builder.RegisterComponentInHierarchy<CoinUI>().AsImplementedInterfaces();
             
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();

@@ -7,13 +7,14 @@ using UnityEngine;
 
 namespace UnityBase.Manager
 {
-    public class CurrencyManager : ICurrencyDataService, IAppPresenterDataService
+    public class CurrencyManager : ICurrencyDataService, ICurrencyViewService, IAppPresenterDataService
     {
         private const string COIN_AMOUNT_KEY = "CoinAmountKey";
-
-        public static Action<int> OnCoinDataUpdate;
+        public event Action<int> OnCoinDataUpdate;
 
         private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
+
+        private ICoinView _coinView;
 
         #region VARIABLES
 
@@ -40,6 +41,11 @@ namespace UnityBase.Manager
             _startCoinAmount = currencyManagerData.startCoinAmount;
         }
 
+        public void UpdateCoinView(ICoinView coinView)
+        {
+            _coinView = coinView;
+        }
+
         ~CurrencyManager() { }
 
         public void Initialize() { }
@@ -51,18 +57,30 @@ namespace UnityBase.Manager
         private int GetCoin() => PlayerPrefs.GetInt(COIN_AMOUNT_KEY, _startCoinAmount);
         private void SetCoin(int value) => PlayerPrefs.SetInt(COIN_AMOUNT_KEY, value);
 
-        public void IncreaseCoin(int value)
+        public void IncreaseCoinData(int value)
         {
             SavedCoinAmount += value;
 
             OnCoinDataUpdate?.Invoke(SavedCoinAmount);
         }
 
-        public void DecreaseCoin(int value)
+        public void DecreaseCoinData(int value)
         {
             SavedCoinAmount -= value;
 
             OnCoinDataUpdate?.Invoke(SavedCoinAmount);
         }
+
+        public void UpdateCoinView(int value)
+        {
+            _coinView.UpdateView(value);
+        }
+
+        public void PlayViewAnimation()
+        {
+            _coinView.PlayCoinIconAnimation();
+        }
+
+        public Transform CoinIconTransform => _coinView.CoinIconT;
     }
 }
