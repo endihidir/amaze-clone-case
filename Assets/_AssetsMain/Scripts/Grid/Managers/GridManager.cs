@@ -95,7 +95,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
     private void UpdateGridData()
     {
         _levelData = _levelDataService.GetCurrentLevelData();
-        _levelData.SaveToJson();
+        _levelData.OverWriteToJson();
         _levelKey = _levelData.Key;
         _serializedGridData = _jsonDataService.Load<int[,]>(_levelKey);
         Width = _serializedGridData.GetLength(0);

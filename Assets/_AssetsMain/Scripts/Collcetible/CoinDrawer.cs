@@ -7,7 +7,7 @@ using UnityBase.Service;
 using UnityEngine;
 using VContainer;
 
-public class CollectibleDrawer : MonoBehaviour
+public class CoinDrawer : MonoBehaviour
 {
     [Inject] 
     private readonly ILevelDataService _levelDataService;
@@ -16,11 +16,11 @@ public class CollectibleDrawer : MonoBehaviour
     
     [SerializeField] private Material _collectibleMaterial;
     
-    private List<ICollectibleDrawer> _collectibles;
+    private List<ICoinDrawer> _collectibles;
 
     private List<Matrix4x4> _matrices = new List<Matrix4x4>();
 
-    private ICollectibleDrawer[] _collectibleDatas;
+    private ICoinDrawer[] _collectibleDatas;
 
     private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
 
@@ -40,7 +40,11 @@ public class CollectibleDrawer : MonoBehaviour
     }
     private void OnGameStateTransition(GameStateData gameStateData)
     {
-        if(!_levelDataService.GetCurrentLevelData().hasUpdateableData) return;
+        if (!_levelDataService.GetCurrentLevelData().hasUpdateableData)
+        {
+            _isInitialized = false;
+            return;
+        }
         
         var isGameStarted = gameStateData.StartState == GameState.GameLoadingState && gameStateData.EndState == GameState.GamePlayState;
         
@@ -54,7 +58,7 @@ public class CollectibleDrawer : MonoBehaviour
 
     private void Initialize()
     {
-        _collectibles = FindObjectsOfType<MonoBehaviour>(true).OfType<ICollectibleDrawer>().ToList();
+        _collectibles = FindObjectsOfType<MonoBehaviour>().OfType<ICoinDrawer>().ToList();
 
         for (int i = 0; i < _collectibles.Count; i++)
         {
@@ -66,19 +70,17 @@ public class CollectibleDrawer : MonoBehaviour
         _isInitialized = _collectibles.Count > 1;
     }
 
-    void Update()
+    private void Update()
     {
         if(!_isInitialized) return;
         
         for (int i = 0; i < _collectibles.Count; i++)
         {
-            if(_collectibles[i] is null) continue;
-
             var collectibleT = _collectibles[i].Transform;
             
             _matrices[i] = Matrix4x4.TRS(collectibleT.position, collectibleT.rotation, collectibleT.localScale);
             
-            if (_collectibles[i].IsCollected)
+            if (_collectibles[i].IsCoinDisabled)
             {
                 _collectibles.RemoveAt(i);
                 _matrices.RemoveAt(i);

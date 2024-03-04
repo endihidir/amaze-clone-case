@@ -607,6 +607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _coinTxt: {fileID: 910128174585775810}
+  _coinIconT: {fileID: 7204659067045241095}
 --- !u!1 &9090744410395796823
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ namespace UnityBase.ManagerSO
         
         public bool IsMatrixNullOrEmpty => gridLevel == null || gridLevel.Length < 1;
 
-        public bool IsInitialized
+        private bool IsInitialized
         {
             get => PlayerPrefs.GetInt("Initialized" + Key, 0) == 1;
             set => PlayerPrefs.SetInt("Initialized" + Key, value ? 1 : 0);
@@ -44,7 +44,7 @@ namespace UnityBase.ManagerSO
         }
 
         [Button]
-        public void SaveToJson()
+        public void OverWriteToJson()
         {
             if (Application.isPlaying)
             {

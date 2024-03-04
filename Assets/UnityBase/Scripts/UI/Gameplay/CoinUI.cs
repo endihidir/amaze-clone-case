@@ -12,6 +12,9 @@ public class CoinUI : MonoBehaviour
     
     [SerializeField] private TextMeshProUGUI _coinTxt;
 
+    [SerializeField] private Transform _coinIconT;
+    public Transform CoinIconT => _coinIconT;
+
     private void Awake() => UpdateView(_currencyDataService.SavedCoinAmount);
 
     private void OnEnable() => CurrencyManager.OnCoinDataUpdate += OnCoinDataUpdate;
@@ -23,13 +26,17 @@ public class CoinUI : MonoBehaviour
     private void UpdateView(int val)
     {
         _coinTxt.text = val.ToString("0");
-        
-        _coinTxt.transform.DOKill(true);
-        _coinTxt.transform.DOScale(1.5f, 0.2f).SetEase(Ease.OutBack).OnComplete(()=> _coinTxt.transform.localScale = Vector3.one);
+    }
+
+    public void PlayCoinIconAnim()
+    {
+        _coinIconT.transform.DOKill(true);
+        _coinIconT.transform.DOPunchScale(Vector3.one * 0.6f, 0.2f)
+                            .OnComplete(()=> _coinIconT.transform.localScale = Vector3.one);
     }
 
     private void OnDestroy()
     {
-        _coinTxt.transform.DOKill();
+        _coinIconT.transform.DOKill();
     }
 }

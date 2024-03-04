@@ -1,37 +1,30 @@
 ﻿using System;
-using DG.Tweening;
 using UnityBase.Service;
 using UnityEngine;
 using VContainer;
-using Random = UnityEngine.Random;
 
-public class CoinTileObject : TileObject, ICollectibleDrawer
+public class CoinTileObject : TileObject, ICoinDrawer
 {
     [Inject] 
     private readonly ICurrencyDataService _currencyDataService;
     
-    [SerializeField] private GameObject _coinObject;
+    [SerializeField] private CoinAnimationHandler _coinAnimationHandler;
     
     private bool _isCollected;
     
-    private float _defaultZPos;
-    
-    private Tween _bounceTween;
-    public bool IsCollected => _isCollected || !isActiveAndEnabled;
-    public Transform Transform => _coinObject.transform;
+    private CoinUI _coinUI;
+
+    public bool IsCoinDisabled => !_coinAnimationHandler.IsActive;
+    public Transform Transform => _coinAnimationHandler.transform;
+    public float StartDelay { get; set; }
 
     public override void Show(float duration, float delay, Action onComplete)
     {
         base.Show(duration, delay, onComplete);
+
+        _coinUI ??= FindObjectOfType<CoinUI>();
         
-        var startDelay = Random.Range(0f, 0.5f);
-
-        _defaultZPos = _coinObject.transform.localPosition.z;
-
-        _bounceTween = DOTween.Sequence()
-                                .AppendInterval(0.5f)
-                                .Append(_coinObject.transform.DOLocalMoveZ(_defaultZPos + 0.1f, 0.2f).SetEase(Ease.OutCubic).SetDelay(startDelay))
-                                .SetLoops(-1, LoopType.Yoyo);
+        _coinAnimationHandler.StartIdleAnim();
     }
 
     public void CollectCoin()
@@ -40,26 +33,22 @@ public class CoinTileObject : TileObject, ICollectibleDrawer
 
         _isCollected = true;
         
-        _coinObject.SetActive(false);
-        
-        _bounceTween?.Kill();
-        
-        _currencyDataService.IncreaseCoin(1);
-        
-        //CurrencyManager.OnCoinCollect?.Invoke(_coinObject.transform.position, 1);
+        _coinAnimationHandler.StartMoveAnim(_coinUI.CoinIconT.position, StartDelay, OnCoinCollectComplete);
     }
 
+    private void OnCoinCollectComplete()
+    {
+        _coinUI.PlayCoinIconAnim();
+        
+        _currencyDataService.IncreaseCoin(1);
+    }
+    
     public override void Reset()
     {
         base.Reset();
 
         _isCollected = false;
-    }
-
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-
-        _bounceTween.Kill();
+        
+        _coinAnimationHandler.Reset();
     }
 }

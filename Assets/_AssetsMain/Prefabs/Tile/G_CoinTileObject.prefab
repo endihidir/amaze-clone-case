@@ -111,7 +111,7 @@ MonoBehaviour:
   _defaultMaterial: {fileID: 2100000, guid: a0a91ec5a5a5ec742b0f775e93d3f27d, type: 2}
   _borderMaterial: {fileID: 2100000, guid: 481ec77a0b3f4fe4c96e7f0307b6cb9c, type: 2}
   _isPainted: 0
-  _coinObject: {fileID: 3801992004546901813}
+  _coinAnimationHandler: {fileID: 1763107766833273898}
 --- !u!4 &4788362541798644122 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2237055021668177710, guid: c43bbceb4025cb149825943c7b6e78fe,
@@ -296,12 +296,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d29c1ad93df38214c8c2f29cbbb66d11, type: 3}
---- !u!1 &3801992004546901813 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6599038553481303143, guid: d29c1ad93df38214c8c2f29cbbb66d11,
+--- !u!114 &1763107766833273898 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8584085329129815928, guid: d29c1ad93df38214c8c2f29cbbb66d11,
     type: 3}
   m_PrefabInstance: {fileID: 8022913200485360466}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 593a489c7c540db458553f3be9a755fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7082728449215802235 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 945187422071113769, guid: d29c1ad93df38214c8c2f29cbbb66d11,

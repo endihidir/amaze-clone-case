@@ -18,8 +18,17 @@ public abstract class TileBase : MonoBehaviour, IPoolable
     public virtual bool IsActive => isActiveAndEnabled;
     public virtual bool IsUnique => false;
 
-    public virtual void Show(float duration, float delay, Action onComplete) => gameObject.SetActive(true);
-    public virtual void Hide(float duration, float delay, Action onComplete) => gameObject.SetActive(false);
+    public virtual void Show(float duration, float delay, Action onComplete)
+    {
+        gameObject.SetActive(true);
+        onComplete?.Invoke();
+    }
+
+    public virtual void Hide(float duration, float delay, Action onComplete)
+    {
+        gameObject.SetActive(false);
+        onComplete?.Invoke();
+    }
 
     protected virtual void OnDestroy() => _poolDataService.Remove(this);
 }
