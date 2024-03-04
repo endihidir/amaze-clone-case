@@ -1,6 +1,4 @@
 using System;
-using UnityBase.EventBus;
-using UnityBase.Manager.Data;
 using UnityBase.ManagerSO;
 using UnityBase.Service;
 using UnityEngine;
@@ -12,27 +10,19 @@ namespace UnityBase.Manager
         private const string COIN_AMOUNT_KEY = "CoinAmountKey";
         public event Action<int> OnCoinDataUpdate;
 
-        private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
-
         private ICoinView _coinView;
-
-        #region VARIABLES
 
         private int _startCoinAmount;
         
         private bool _isCoinSaveAvailable;
-
-        #endregion
-
-        #region PROPERTIES
-
+        
+        public Transform CoinIconTransform => _coinView.CoinIconT;
+        
         public int SavedCoinAmount
         {
-            get => GetCoin();
-            private set => SetCoin(value);
+            get => PlayerPrefs.GetInt(COIN_AMOUNT_KEY, _startCoinAmount);
+            private set => PlayerPrefs.SetInt(COIN_AMOUNT_KEY, value);
         }
-
-        #endregion
 
         public CurrencyManager(ManagerDataHolderSO managerDataHolderSo)
         {
@@ -40,22 +30,16 @@ namespace UnityBase.Manager
 
             _startCoinAmount = currencyManagerData.startCoinAmount;
         }
-
-        public void UpdateCoinView(ICoinView coinView)
-        {
-            _coinView = coinView;
-        }
-
+        
         ~CurrencyManager() { }
 
         public void Initialize() { }
-
         public void Start() { }
-
         public void Dispose() { }
-
-        private int GetCoin() => PlayerPrefs.GetInt(COIN_AMOUNT_KEY, _startCoinAmount);
-        private void SetCoin(int value) => PlayerPrefs.SetInt(COIN_AMOUNT_KEY, value);
+        public void SetCoinViewData(ICoinView coinView)
+        {
+            _coinView = coinView;
+        }
 
         public void IncreaseCoinData(int value)
         {
@@ -80,7 +64,5 @@ namespace UnityBase.Manager
         {
             _coinView.PlayCoinIconAnimation();
         }
-
-        public Transform CoinIconTransform => _coinView.CoinIconT;
     }
 }
