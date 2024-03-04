@@ -14,8 +14,6 @@ public class CoinDrawer : MonoBehaviour
 
     private List<Matrix4x4> _matrices = new List<Matrix4x4>();
 
-    private ICoinDrawer[] _collectibleDatas;
-
     private EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>();
 
     private bool _isInitialized;

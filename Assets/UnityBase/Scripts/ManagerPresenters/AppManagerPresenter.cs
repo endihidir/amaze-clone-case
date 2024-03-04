@@ -6,7 +6,7 @@ using VContainer.Unity;
 
 namespace UnityBase.Presenter
 {
-    public class AppManagerPresenter : IInitializable, IPostInitializable, IDisposable
+    public class AppManagerPresenter : VContainer.Unity.IInitializable, IPostInitializable, IDisposable
     {
         private readonly IEnumerable<IAppPresenterDataService> _appPresenterDataServices;
         public AppManagerPresenter(IEnumerable<IAppPresenterDataService> appPresenterDataServices) => _appPresenterDataServices = appPresenterDataServices;

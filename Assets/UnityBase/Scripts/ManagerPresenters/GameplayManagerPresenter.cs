@@ -8,7 +8,7 @@ using VContainer.Unity;
 
 namespace UnityBase.Presenter
 {
-    public class GameplayManagerPresenter : IInitializable, IPostInitializable, IDisposable
+    public class GameplayManagerPresenter : VContainer.Unity.IInitializable, IPostInitializable, IDisposable
     {
         [Inject]
         private readonly IEnumerable<IGameplayPresenterDataService> _gameplayPresenterDataServices;

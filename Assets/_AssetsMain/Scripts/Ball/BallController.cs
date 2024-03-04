@@ -5,7 +5,7 @@ using UnityBase.Service;
 using UnityEngine;
 using VContainer;
 
-public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IResettable
+public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettable
 {
     [Inject] 
     private readonly IPoolDataService _poolDataService;
@@ -16,6 +16,8 @@ public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IRe
     [SerializeField] private PathProvider _pathProvider;
     [SerializeField] private MovementController _movementController;
     [SerializeField] private MaterialProvider _materialProvider;
+    [SerializeField] private GameObject _trailObject;
+    
     
     private TileVisitor _tileVisitor;
     private PaintCompleteChecker _paintCompleteChecker = new PaintCompleteChecker();
@@ -41,7 +43,6 @@ public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IRe
     {
         gameObject.SetActive(false);
         onComplete?.Invoke();
-        transform.localPosition = Vector3.zero;
     }
 
     private void Update()
@@ -80,15 +81,21 @@ public class BallController : MonoBehaviour, IPoolable, IInputInitializable, IRe
 
         if (isAllTilesPainted)
         {
-            EnableInput(false);
-            
+            ActivateInitials(false);
+
             _movementController.Dispose();
-            
+
             GridManager.OnAllTilesPainted?.Invoke();
         }
     }
-    public void EnableInput(bool enable) => _isInputEnabled = enable;
-    public void Reset() => EnableInput(false);
+    public void ActivateInitials(bool enable)
+    {
+        _isInputEnabled = enable;
+        
+        _trailObject.SetActive(enable);
+    }
+    
+    public void Reset() => ActivateInitials(false);
 
     private void OnDestroy()
     {

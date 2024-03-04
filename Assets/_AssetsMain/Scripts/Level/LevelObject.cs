@@ -15,7 +15,7 @@ public class LevelObject : MonoBehaviour, IPoolable
 
     private float _endXPos;
     private Tween _moveTween;
-    private IInputInitializable[] _ballInputs;
+    private IActivatable[] _ballInputs;
     public Transform GridsParent => _gridsParent;
     public Transform BallsParent => _ballsParent;
     
@@ -65,13 +65,13 @@ public class LevelObject : MonoBehaviour, IPoolable
 
     public void ActivateInput()
     {
-        _ballInputs = GetComponentsInChildren<IInputInitializable>();
-        _ballInputs.ForEach(x => x.EnableInput(true));
+        _ballInputs = GetComponentsInChildren<IActivatable>();
+        _ballInputs.ForEach(x => x.ActivateInitials(true));
     }
     
     public void DeactivateInput()
     {
-        _ballInputs.ForEach(x => x.EnableInput(true));
+        _ballInputs.ForEach(x => x.ActivateInitials(true));
     }
     public void SetEndXPos(float endXPos)
     {
