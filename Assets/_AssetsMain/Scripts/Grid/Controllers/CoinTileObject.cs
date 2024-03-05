@@ -41,8 +41,6 @@ public class CoinTileObject : TileObject, ICoinDrawer
     private void OnCoinCollectComplete()
     {
         _currencyViewService.UpdateCoinView(_coinValue);
-        
-        _currencyViewService.PlayViewAnimation();
     }
     
     public override void Reset()

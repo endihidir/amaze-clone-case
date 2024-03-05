@@ -59,10 +59,5 @@ namespace UnityBase.Manager
         {
             _coinView.UpdateView(value);
         }
-
-        public void PlayViewAnimation()
-        {
-            _coinView.PlayCoinIconAnimation();
-        }
     }
 }

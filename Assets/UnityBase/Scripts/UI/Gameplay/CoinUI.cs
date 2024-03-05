@@ -25,9 +25,10 @@ public class CoinUI : MonoBehaviour, ICoinView
     {
         _defaultValue += val;
         _coinTxt.text = _defaultValue.ToString("0");
+        PlayCoinIconAnimation();
     }
 
-    public void PlayCoinIconAnimation()
+    private void PlayCoinIconAnimation()
     {
         _iconScaleUpAnim?.Kill(true);
         _iconScaleUpAnim = _coinIconT.transform.DOPunchScale(Vector3.one * 0.6f, 0.2f)

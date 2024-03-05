@@ -6,6 +6,5 @@ namespace UnityBase.Manager
     {
         public Transform CoinIconT { get; }
         public void UpdateView(int val);
-        public void PlayCoinIconAnimation();
     }
 }

@@ -6,6 +6,5 @@ namespace UnityBase.Service
     {
         public Transform CoinIconTransform { get; }
         public void UpdateCoinView(int value);
-        public void PlayViewAnimation();
     }
 }
