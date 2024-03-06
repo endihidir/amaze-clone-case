@@ -20,7 +20,7 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
     
     private TileVisitor _tileVisitor;
     private PaintCompleteChecker _paintCompleteChecker = new PaintCompleteChecker();
-    private bool _isInputEnabled, _isMovementInProgress;
+    private bool _isInputEnabled;
 
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
@@ -54,7 +54,7 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
 
         Direction direction = _swipeInputService.GetSwipeDirection();
         
-        if (direction != Direction.None && !_isMovementInProgress)
+        if (direction != Direction.None && !_movementController.IsMovementInProgress)
         {
             var tilePath = _pathProvider.GetTilePath(direction);
             
@@ -64,8 +64,6 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
                 
                 if (lastTile)
                 {
-                    _isMovementInProgress = true;
-                    
                     _blastParticle.SetActive(false);
 
                     _movementController.MoveBall(lastTile.transform.position, OnMovementComplete);
@@ -76,12 +74,7 @@ public class BallController : MonoBehaviour, IPoolable, IActivatable, IResettabl
         }
     }
 
-    private void OnMovementComplete()
-    {
-        _isMovementInProgress = false;
-        
-        _blastParticle.SetActive(true);
-    }
+    private void OnMovementComplete() => _blastParticle.SetActive(true);
 
     private void OnVisitComplete()
     {

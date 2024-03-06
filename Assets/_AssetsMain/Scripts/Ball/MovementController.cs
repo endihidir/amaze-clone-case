@@ -22,7 +22,7 @@ public class MovementController : MonoBehaviour, IMoveEntity
     public Transform MeshHandlerTransform => _meshHandlerTransform;
     public Vector3 TargetPosition => _targetPosition;
     public float Speed => _movementSpeed;
-    public bool CanPassNextMovementInstantly => false;
+    public bool CanPassNextMovementInstantly => true;
     public bool IsMovementInProgress => _moveCommand?.IsInProgress ?? false;
     
     public void MoveBall(Vector3 targetPosition, Action onComplete)
