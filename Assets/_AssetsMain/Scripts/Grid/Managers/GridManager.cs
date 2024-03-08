@@ -10,7 +10,7 @@ using UnityEngine;
 public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterDataService
 {
     public static Action OnAllTilesPainted;
-    public static Action<CoinTileObject> OnCollectCoinTile;
+    public static Action<CoinTileObject> OnCollectCoin;
     private EventBinding<GameStateData> _gameStateBinder = new EventBinding<GameStateData>();
    
     private readonly IPoolDataService _poolDataService;
@@ -52,7 +52,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         EventBus<GameStateData>.AddListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
 
         OnAllTilesPainted += AllTilesPainted;
-        OnCollectCoinTile += CollectCoinTile;
+        OnCollectCoin += CollectCoin;
     }
 
     public void Start() { }
@@ -63,7 +63,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         EventBus<GameStateData>.RemoveListener(_gameStateBinder, GameStateData.GetChannel(TransitionState.Start));
         
         OnAllTilesPainted -= AllTilesPainted;
-        OnCollectCoinTile -= CollectCoinTile;
+        OnCollectCoin -= CollectCoin;
     }
 
     private void OnStartGameStateTransition(GameStateData gameStateData)
@@ -134,7 +134,7 @@ public class GridManager : IGridDataService, IGridEntity, IGameplayPresenterData
         _gameplayDataService.ChangeGameState(GameState.GameSuccessState, 0f);
     }
     
-    private void CollectCoinTile(CoinTileObject coinTileObject)
+    private void CollectCoin(CoinTileObject coinTileObject)
     {
         for (int x = 0; x < _gridData.Width; x++)
         {

@@ -60,8 +60,6 @@ public class TileVisitor : IVisitor
             coinTileObject.CollectCoin(_coinMovementStartDelay);
             
             _coinMovementStartDelay += 0.05f;
-            
-            GridManager.OnCollectCoinTile?.Invoke(coinTileObject);
         }
     }
 

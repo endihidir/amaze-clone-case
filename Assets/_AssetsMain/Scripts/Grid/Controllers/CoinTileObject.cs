@@ -36,6 +36,8 @@ public class CoinTileObject : TileObject, ICoinDrawer
         _currencyDataService.IncreaseCoinData(_coinValue);
         
         _coinAnimationHandler.StartMoveAnim(_currencyViewService.CoinIconTransform.position, movementStartDelay, OnCoinCollectComplete);
+        
+        GridManager.OnCollectCoin?.Invoke(this);
     }
 
     private void OnCoinCollectComplete()
